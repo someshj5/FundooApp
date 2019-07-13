@@ -12,12 +12,19 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
+from dotenv import load_dotenv, find_dotenv
+from pathlib import *
+load_dotenv(find_dotenv())
+env_path = Path('.')/'.env'
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
+SECRET_KEY= os.getenv('SECRET_KEY')
+
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -134,11 +141,17 @@ REST_FRAMEWORK = {
     # ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
-#         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+
+        #         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
 #         'rest_framework.authentication.SessionAuthentication',
     ),
 
 }
 
 
-
+EMAIL_USE_TLS= os.getenv('EMAIL_USE_TLS')
+EMAIL_HOST=os.getenv('EMAIL_HOST')
+EMAIL_HOST_USER=os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD=os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_PORT=os.getenv('EMAIL_PORT')

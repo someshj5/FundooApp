@@ -8,13 +8,14 @@ from .tokens import account_activation_token
 from django.utils.encoding import force_text
 from django.contrib.auth import authenticate, login, logout
 from .models import Profile
+from django.contrib.auth.decorators import login_required
 from .serializers import ProfileSerializers
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, renderer_classes
 from django.http import JsonResponse
 from django.core.mail import EmailMessage
 from django.http import HttpResponse
-
+import jwt,json
 
 @api_view(["POST"])
 def signup_view(request):
@@ -35,12 +36,8 @@ def signup_view(request):
             })
             to_email= serdata.email
             email= EmailMessage(subject,message,to=[to_email])
-            # print(to_email,'xyz')
             email.send()
-            # serdata.email_user(subject,message)
-            # return redirect('account_activation_sent')
             return HttpResponse('We have sent you an email, please confirm your email address to complete registration')
-
         # return Response(serializer.data)
     else:
         return Response({'status_code':400,'message':'something went wrong'})
@@ -64,59 +61,34 @@ def activate(request, uidb64, token):
         return HttpResponse('Activation link is invalid!')
 
 
+
 @api_view(["POST"])
 def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        logindata = Profile.objects.all(username=username)
-        for i in logindata:
-            if logindata[i]['username'] == username and logindata[i]['password']== password:
-                login(request,logindata)
+        user = Profile.objects.get(username =username, password = password)
+        # user = authenticate(username=username,password =password
+        print(user,'------->')
+        if user:
+            print('xyz')
+            payload={
+                'id': request.user.id,
+                'email': user.email
+            }
+            jwt_token= {'token':jwt.encode(payload,"SECRET_KEY",algorithm="HS256").decode('utf-8')}
 
-
-
-
-
-                logindata = Profile.objects.filter(username=username)
-                serializers = ProfileSerializers(logindata)
-                return Response(serializers.data)
-            # else:
-            # return HttpResponse("Your account was inactive.")
+            return HttpResponse(
+                json.dumps(jwt_token),
+                status=200,
+                content_type="application/json"
+            )
         else:
-            print("Someone tried to login and failed.")
-            print("They used username: {} and password: {}".format(username,password))
-            # return HttpResponse("Invalid login details given")
-            return Response({'status_code': 400, 'message': 'something went wrong'})
-    else:
-        return Response({'status_code':400,'message':'Invalid method'})
-
-
-
-
-
-
-
-# Create your views here.
-# @api_view(["POST"])
-# def signup_view(request):
-#     if request.method == 'POST':
-#         username = request.POST.get('username')
-#         password = request.POST.get('password')
-#         data = Profile.objects.filter(username=username)
-#         serializer = ProfileSerializers(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#
-#         return Response(serializer.data)
-#     else:
-#         return Response({'status_code':400,'message':'something went wrong'})
-
-
-# def login_view(request):
-#     if request.method=='POST':
-#         username = request.POST.get('username')
-#         password = request.POST.get('password')
+            return Response(
+                json.dumps({'Error':"Invalid credentials"}),
+                status=400,
+                content_type="application/json"
+            )
 
 
 
