@@ -17,9 +17,15 @@ from django.contrib import admin
 from django.urls import path
 from fundooapp import views as v2
 from django.conf.urls import include
+from django.conf.urls import url
+
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('fundoo/',include('fundooapp.urls'))
+    path('fundoo/',include('fundooapp.urls')),
+
+    url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        v2.activate, name='activate'),
+
 ]

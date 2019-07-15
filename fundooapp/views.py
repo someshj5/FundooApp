@@ -17,31 +17,74 @@ from django.core.mail import EmailMessage
 from django.http import HttpResponse
 import jwt,json
 
+
 @api_view(["POST"])
 def signup_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         serializer = ProfileSerializers(data=request.data)
-        if serializer.is_valid():
-            serdata = serializer.save()
-
-            current_site = get_current_site(request)
-            subject = 'Activate your fproject Account'
-            message= render_to_string('account_activation_email.html',{
-                'user': serdata,
-                'domain': current_site.domain,
-                'uid':urlsafe_base64_encode(force_bytes(serdata.id)),
-                'token': account_activation_token.make_token(serdata),
-            })
-            to_email= serdata.email
-            email= EmailMessage(subject,message,to=[to_email])
-            email.send()
-            return HttpResponse('We have sent you an email, please confirm your email address to complete registration')
-        # return Response(serializer.data)
+        # print('xyz')
+        try:
+            if serializer.is_valid():
+                serdata = serializer.save()
+                current_site = get_current_site(request)
+                subject = 'Activate your fproject Account'
+                message= render_to_string('account_activation_email.html',{
+                    'user': serdata,
+                    'domain': current_site.domain,
+                    'uid':urlsafe_base64_encode(force_bytes(serdata.id)),
+                    'token': account_activation_token.make_token(serdata),
+                })
+                to_email= serdata.email
+                email= EmailMessage(subject,message,to=[to_email])
+                email.send()
+                # print('xyz')
+                return HttpResponse('We have sent you an email, please confirm your email address to complete registration')
+            # return Response(serializer.data)
+            else:
+                return Response({'status_code':400,'message':'something went wrong'})
+        except ValueError:
+            return Response({'error': 'Enter Valid Data'}, status=400)
     else:
-        return Response({'status_code':400,'message':'something went wrong'})
+        return Response({'status_code': 400, 'message': 'something went wrong'})
 
+
+@api_view(['POST'])
+def signupjwt(request):
+    if request.method == 'POST':
+        username= request.POST.get('username')
+        password= request.POST.get('password')
+        serializer = ProfileSerializers(data=request.data)
+        try:
+            if serializer.is_valid():
+                user= serializer.save()
+                if user:
+                    print(user,'XYZ------->')
+                    payload = {
+                        'id': request.user.id,
+                        'email': user.email
+                    }
+                    jwt_token = {'token': jwt.encode(payload, "SECRET_KEY", algorithm="HS256").decode('utf-8')}
+                    print(jwt_token['token'])
+                    current_site = get_current_site(request)
+                    subject = 'Activate your fproject Account'
+                    message =render_to_string('account_activation_email.html',{
+                    'user': user,
+                    'domain': current_site.domain,
+                    'uid':urlsafe_base64_encode(force_bytes(user.id)).decode(),
+                    'token': jwt_token['token'],
+                })
+                    to_email = user.email
+                    email = EmailMessage(subject, message, to=[to_email])
+                    email.send()
+                    return HttpResponse('We have sent you an email, please confirm your email address to complete registration')
+                else:
+                    return HttpResponse('no user')
+            else:
+                return Response({'status_code': 400, 'message': 'something went wrong'})
+        except ValueError:
+            return Response({'error': 'Enter Valid Data'}, status=400)
 
 
 def activate(request, uidb64, token):
@@ -57,6 +100,24 @@ def activate(request, uidb64, token):
         user.save()
         # login(request, user)
         return HttpResponse('Your account has been activate successfully')
+    elif user is not None:
+        print('zzz')
+        if not user.is_active:
+            payload = {
+                'id':user.id,
+                'email':user.email
+            }
+            if payload == jwt.decode(token,"SECRET_KEY",algorithm="HS256"):
+                user.is_activate =  True
+                user.save()
+                result = {
+                    'activate':'success'
+                }
+                return HttpResponse(
+                    json.dumps(result),
+                    status=200,
+                    content_type="application/json"
+                )
     else:
         return HttpResponse('Activation link is invalid!')
 
@@ -70,25 +131,29 @@ def user_login(request):
         user = Profile.objects.get(username =username, password = password)
         # user = authenticate(username=username,password =password
         print(user,'------->')
-        if user:
-            print('xyz')
-            payload={
-                'id': request.user.id,
-                'email': user.email
-            }
-            jwt_token= {'token':jwt.encode(payload,"SECRET_KEY",algorithm="HS256").decode('utf-8')}
+        try:
+            if user:
+                print('xyz')
+                payload={
+                    'id': request.user.id,
+                    'email': user.email
+                }
+                jwt_token= {'token':jwt.encode(payload,"SECRET_KEY",algorithm="HS256").decode('utf-8')}
+                print(jwt_token['token'])
 
-            return HttpResponse(
-                json.dumps(jwt_token),
-                status=200,
-                content_type="application/json"
-            )
-        else:
-            return Response(
-                json.dumps({'Error':"Invalid credentials"}),
-                status=400,
-                content_type="application/json"
-            )
+                return HttpResponse(
+                    json.dumps(jwt_token),
+                    status=200,
+                    content_type="application/json"
+                )
+            else:
+                return Response(
+                    json.dumps({'Error':"Invalid credentials"}),
+                    status=400,
+                    content_type="application/json"
+                )
+        except ValueError:
+            return Response({'error': 'Enter Valid Data'}, status=400)
 
 
 
