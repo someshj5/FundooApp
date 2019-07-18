@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social_django',
     'fundooapp',
 ]
 
@@ -54,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware'
 ]
 
 ROOT_URLCONF = 'fundooproject.urls'
@@ -69,6 +71,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -80,6 +85,17 @@ WSGI_APPLICATION = 'fundooproject.wsgi.application'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',
+    'social_core.backends.twitter.TwitterOAuth',
+    'social_core.backends.facebook.FacebookOAuth2',
+
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+LOGIN_URL = 'fundooapp:user_login'
+LOGOUT_URL = 'fundooapp:logout'
+LOGIN_REDIRECT_URL = 'fundooapp:home'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
@@ -95,7 +111,25 @@ DATABASES = {
     }
 }
 
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': 'localhost:6379',
+        'OPTIONS': {
+            'DB': 0,
+        }
+    }
+}
 
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django_redis.cache.RedisCache',
+#         'LOCATION': 'redis://127.0.0.1:6379/1',
+#         'OPTIONS': {
+#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+#         }
+#     }
+# }
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
@@ -155,3 +189,10 @@ EMAIL_HOST=os.getenv('EMAIL_HOST')
 EMAIL_HOST_USER=os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD=os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_PORT=os.getenv('EMAIL_PORT')
+
+
+SOCIAL_AUTH_GITHUB_KEY= os.getenv('SOCIAL_AUTH_GITHUB_KEY')
+SOCIAL_AUTH_GITHUB_SECRET= os.getenv('SOCIAL_AUTH_GITHUB_SECRET')
+
+SOCIAL_AUTH_FACEBOOK_KEY= os.getenv('SOCIAL_AUTH_FACEBOOK_KEY')
+SOCIAL_AUTH_FACEBOOK_SECRET= os.getenv('SOCIAL_AUTH_FACEBOOK_SECRET')

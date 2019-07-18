@@ -1,0 +1,9 @@
+
+{% block content %}
+  <h1>Login</h1>
+  <br>
+<!--  <p><strong>&#45;&#45; OR &#45;&#45;</strong></p>-->
+  <a href="{% url 'social:begin' 'github' %}">Login with GitHub</a><br>
+  <a href="{% url 'social:begin' 'facebook' %}">Login with Facebook</a>
+
+{% endblock %}
