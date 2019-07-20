@@ -167,8 +167,8 @@ dmypy.json
 #dot_env files
 .env
 .scannerwork
-docker-compose.yml
-sonar-project.properties
+*.yml
+*.properties
 
 # Pyre type checker
 .pyre/
