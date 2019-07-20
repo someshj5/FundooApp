@@ -163,7 +163,8 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
-
+docker-compose.yml
+sonar-project.properties
 #dot_env files
 .env
 .scannerwork
