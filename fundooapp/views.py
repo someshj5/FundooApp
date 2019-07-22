@@ -1,8 +1,11 @@
 """
-abcdefghijklmn
+    :author: Somesh Jaiswal
+    :since:
+    :overview:
 """
 
 import json
+import imghdr
 import jwt
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes
@@ -14,28 +17,26 @@ from django.core.mail import EmailMessage
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
+from django.views.decorators.csrf import csrf_exempt
 from django.utils.encoding import force_text
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .tokens import account_activation_token
 from .models import Profile
 from .serializers import ProfileSerializers
-# from django.views.decorators.csrf import csrf_exempt
-# from django.shortcuts import redirect
 from .service import Redis
-
+from .s3_transfer import S3Upload
 
 r = Redis()
 
 
 @api_view(['POST'])
-# @csrf_exempt
 @login_required
 def logoutuser(request):
     """
-
-    :param request:
-    :return:
+    This method is for user logout
+    :param request: request here is to logout the user
+    :return: render it to the registration page
     """
     logout(request)
     r.flushall()
@@ -46,9 +47,9 @@ def logoutuser(request):
 @login_required
 def home(request):
     """
-
-    :param request:
-    :return:
+    this method is for homepage view
+    :param request: request for homepage
+    :return: renders to th home page
     """
     return render(request, 'home.html')
 
@@ -56,9 +57,9 @@ def home(request):
 @api_view(["POST"])
 def signup_view(request):
     """
-
-    :param request:
-    :return:
+    This method is used for token based registration
+    :param request:  request for user data
+    :return: returns a account activation link at the users email
     """
     if request.method == 'POST':
         # username = request.POST.get('username')
@@ -95,9 +96,9 @@ def signup_view(request):
 @api_view(['POST'])
 def signupjwt(request):
     """
-
-    :param request:
-    :return:
+    This method is used for  jwt token based registration
+    :param request: request for user data
+    :return: returns a account activation link at the users email
     """
     if request.method == 'POST':
         # username = request.POST.get('username')
@@ -140,11 +141,11 @@ def signupjwt(request):
 
 def activatejwt(request, uidb64, token):
     """
-
-    :param request:
-    :param uidb64:
-    :param token:
-    :return:
+    This method is used for account activation link completion
+    :param request: request for uidb64 and token
+    :param uidb64: encoded uid
+    :param token: jwt token
+    :return: returns Httpresponse for successful account activation
     """
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
@@ -175,11 +176,11 @@ def activatejwt(request, uidb64, token):
 
 def activate(request, uidb64, token):
     """
-
-    :param request:
-    :param uidb64:
-    :param token:
-    :return:
+    This method is used for account activation link completion
+    :param request: request for uidb64 and token
+    :param uidb64: encoded uid
+    :param token: generated through Password ResetToken Generator
+    :return: returns Httpresponse for successful account activation
     """
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
@@ -204,9 +205,9 @@ def activate(request, uidb64, token):
 @api_view(["POST"])
 def user_login(request):
     """
-
-    :param request:
-    :return:
+    This method is for User login at the app
+    :param request: request for username and password
+    :return: returns a token based user login message
     """
     if request.method == 'POST':
         username = request.data.get('username')
@@ -244,9 +245,9 @@ def user_login(request):
 @api_view(["POST"])
 def forgot_password(request):
     """
-
-    :param request:
-    :return:
+    This method is for the user if forgrts the password
+    :param request: request for new password
+    :return: return the link to the users email for password reset
     """
     if request.method == 'POST':
         email = request.data.get('email')
@@ -281,11 +282,11 @@ def forgot_password(request):
 @api_view(['GET', 'POST'])
 def password_reset(request, uidb64, token):
     """
-
-    :param request:
-    :param uidb64:
-    :param token:
-    :return:
+    This method resets the password of the user
+    :param request: request here is POST and GET
+    :param uidb64: the encoded uid of the user
+    :param token: Password Reset Token Generator
+    :return: it return the Password reset status
     """
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
@@ -304,3 +305,20 @@ def password_reset(request, uidb64, token):
         return Response({"name": user.username}, status=200)
     else:
         return HttpResponse('Password Reset link is invalid!')
+
+# @api_view(["POST"])
+@csrf_exempt
+def upload(request):
+    """
+    The method uploads the image files to the S3 bucket
+    :param request: request here is for Post
+    :return: returns a Httpresponse of file upload successfull
+    """
+    if request.method == "POST":
+        image = request.FILES.get('IMAGE')
+        if imghdr.what(image):
+            x = S3Upload.transfer(request, image)
+            if x:
+                return HttpResponse('File uploaded to s3')
+        else:
+            HttpResponse('File other than image are not allowed')

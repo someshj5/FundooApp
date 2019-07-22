@@ -69,6 +69,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+.scannerwork/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -167,7 +168,7 @@ docker-compose.yml
 sonar-project.properties
 #dot_env files
 .env
-.scannerwork
+.scannerwork/report-task.txt
 *.yml
 *.properties
 

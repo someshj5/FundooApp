@@ -19,6 +19,7 @@ urlpatterns = [
     url(r'^register/$', TemplateView.as_view(template_name='register.html')),
     path('forgot_password/', views.forgot_password, name='forgot_password'),
     path('activatejwt/<uidb64>/<token>/', views.activatejwt, name='activatejwt'),
+    path('upload/', views.upload, name='upload'),
 
     path('password_reset/(?P<uidb64>[0-9A-Za-z_\-]+)/'
          '(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/',

@@ -11,7 +11,8 @@ class AccountActivationTokenGenerator(PasswordResetTokenGenerator):
     """
     This is a class for generating tokens using PasswordResetTokenGenerator
 
-    :param Password Reset Token Generator :
+    :param Password Reset Token Generator : Strategy object used to generate and
+    check tokens for the password reset mechanism.
     Strategy object used to generate and check tokens for the password reset mechanism.
 
     """

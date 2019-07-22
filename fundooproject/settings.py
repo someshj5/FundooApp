@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     # 'pylint_django',
     'social_django',
     'fundooapp',
+
 ]
 
 MIDDLEWARE = [
