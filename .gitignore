@@ -168,9 +168,12 @@ docker-compose.yml
 sonar-project.properties
 #dot_env files
 .env
-.scannerwork/report-task.txt
+
 *.yml
 *.properties
 
 # Pyre type checker
 .pyre/
+
+.scannerwork/
+*.txt
