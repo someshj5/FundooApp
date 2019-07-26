@@ -7,7 +7,9 @@
 import json
 import imghdr
 import jwt
+from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
+from django.utils.decorators import method_decorator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.utils.http import urlsafe_base64_decode
@@ -16,22 +18,34 @@ from django.http import HttpResponse
 from django.core.mail import EmailMessage
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.encoding import force_text
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .tokens import account_activation_token
-from .models import Profile
-from .serializers import ProfileSerializers
+from .models import Profile, Notes
+from .serializers import ProfileSerializers, NoteSerializers
 from .service import Redis
 from .s3_transfer import S3Upload
+from .decorators import requiredLogin
 
 r = Redis()
 
+def get_custom_response(success=False,message='something went wrong',data=[],status=400):
+    response = {
+        'success': success,
+        'message': message,
+        'data': data
+    }
 
-@api_view(['POST'])
-@login_required
+    return  Response(response,status=status)
+
+
+
+
 def logoutuser(request):
     """
     This method is for user logout
@@ -44,8 +58,11 @@ def logoutuser(request):
     # return Response({'successfully logout'}, status=200)
 
 
-@login_required
+# @login_user_required
+# @requiredLogin
+@method_decorator(requiredLogin)
 def home(request):
+    # print("+++++++++++++++")
     """
     this method is for homepage view
     :param request: request for homepage
@@ -109,15 +126,13 @@ def signupjwt(request):
             if serializer.is_valid():
                 # print('valid')
                 user = serializer.save()
+
                 if user:
-                    print(user, 'XYZ------->')
                     payload = {
-                        'id': request.user.id,
+                        'id': user.id,
                         'email': user.email
                     }
                     token = jwt.encode(payload, "SECRET_KEY", algorithm="HS256")
-                    print("111111111", token)
-                    # print(jwt_token['token'])
                     current_site = get_current_site(request)
                     subject = 'Activate your fundooapp project Account'
                     message = render_to_string('account_active.html',
@@ -131,14 +146,13 @@ def signupjwt(request):
                                         'confirm your email address to complete registration')
                 else:
                     raise ValueError
-                    # return HttpResponse('no user')
             else:
                 raise ValueError
-                # return Response({'status_code': 400, 'message': 'something went wrong'})
         except ValueError:
             return Response({'error': 'Enter Valid Data'}, status=400)
 
 
+@api_view(['GET'])
 def activatejwt(request, uidb64, token):
     """
     This method is used for account activation link completion
@@ -149,10 +163,9 @@ def activatejwt(request, uidb64, token):
     """
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
-        user = Profile.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, Profile.DoesNotExist):
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError):
         user = None
-
     try:
         if user is not None:
             if not user.is_active:
@@ -169,7 +182,7 @@ def activatejwt(request, uidb64, token):
             else:
                 return HttpResponse('already activated or false')
         else:
-            return HttpResponse('Activation link is invalid!')
+            raise ValueError
     except ValueError:
         return Response({'error': 'Enter Valid Data'}, status=400)
 
@@ -184,7 +197,7 @@ def activate(request, uidb64, token):
     """
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
-        user = Profile.objects.get(pk=uid)
+        user = User.objects.get(pk=uid)
     except (TypeError, ValueError, OverflowError, Profile.DoesNotExist):
         user = None
 
@@ -213,31 +226,29 @@ def user_login(request):
         username = request.data.get('username')
         password = request.data.get('password')
         try:
-            user = Profile.objects.get(username=username, password=password)
-            # user = authenticate(username=username,password =password)
-        except Profile.DoesNotExist:
+            user = authenticate(username=username, password=password)
+            print(user, '----x')
+
+        except User.DoesNotExist:
             user = None
-        # print(user, '------->')
         try:
             if user:
-                # print('xyz')
                 payload = {
-                    'id': request.user.id,
+                    'id': user.id,
                     'email': user.email
                 }
                 jwt_token = {'token': jwt.encode(
                     payload, "SECRET_KEY",
                     algorithm="HS256").decode('utf-8')}
-                # print(jwt_token['token'])
                 r.set('token', jwt_token['token'])
-                # login(request, user)
-                # temp = Redis.get(jwt_token)
+                login(request, user)
                 return HttpResponse(
                     json.dumps(jwt_token),
                     status=200,
                     content_type="application/json"
                 )
-
+            else:
+                raise ValueError
         except ValueError:
             return Response({'error': 'Enter Valid Data'}, status=400)
 
@@ -253,8 +264,8 @@ def forgot_password(request):
         email = request.data.get('email')
         # print(email)
         try:
-            user = Profile.objects.get(email=email)
-        except Profile.DoesNotExist:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
             user = None
         # print(user, '----->')
         try:
@@ -272,7 +283,8 @@ def forgot_password(request):
                 email.send()
                 # print('xyz')
                 return HttpResponse('We have sent you the link to reset your password')
-
+            else:
+                raise ValueError
         except ValueError:
             return Response({'error': 'Enter Valid Data'}, status=400)
     else:
@@ -290,8 +302,8 @@ def password_reset(request, uidb64, token):
     """
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
-        user = Profile.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, Profile.DoesNotExist):
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
 
     if user is not None and account_activation_token.check_token(user, token):
@@ -306,7 +318,7 @@ def password_reset(request, uidb64, token):
     else:
         return HttpResponse('Password Reset link is invalid!')
 
-# @api_view(["POST"])
+
 @csrf_exempt
 def upload(request):
     """
@@ -322,3 +334,56 @@ def upload(request):
                 return HttpResponse('File uploaded to s3')
         else:
             HttpResponse('File other than image are not allowed')
+
+
+class NotesCreate(APIView):
+
+    def get(self, request):
+        noted = Notes.objects.all()
+        notedata = NoteSerializers(noted, many=True)
+        return Response(notedata.data, status=200)
+
+    def post(self, request):
+        response = {
+            'success': False,
+            'message': 'something went wrong ',
+            'data': []
+        }
+
+        print(request.data)
+        serialize = NoteSerializers(data=request.data)
+        try:
+            print(serialize)
+            if serialize.is_valid():
+                obj = serialize.save()
+                response = get_custom_response(success=True, message='Note successfully created', status=201)
+            else:
+                response = get_custom_response(message='data is not valid')
+                raise ValueError
+        except ValueError:
+            pass
+        return response
+
+
+class NotesApi(APIView):
+
+    def get(self, request, pk):
+        noted = Notes.objects.get(pk=pk)
+        notedata = NoteSerializers(noted)
+        return Response(notedata.data, status=200)
+
+    def delete(self, request, pk):
+        note = Notes.objects.get(pk=pk)
+        print(note)
+        note.delete()
+        return Response({'successfully deleted'}, status=200)
+
+    def put(self, request, pk):
+        note = Notes.objects.get(pk=pk)
+        note_ser = NoteSerializers(instance=note, data=request.data, partial=True)
+
+        if note_ser.is_valid(raise_exception=True):
+            note_ser.save()
+
+        return Response(note_ser.data, status=200)
+

@@ -5,6 +5,7 @@ from django.urls import path
 from django.conf.urls import url
 from django.views.generic import TemplateView
 from . import views
+# from.views import home
 # from rest_framework_simplejwt import views as jwt_views
 
 
@@ -20,6 +21,13 @@ urlpatterns = [
     path('forgot_password/', views.forgot_password, name='forgot_password'),
     path('activatejwt/<uidb64>/<token>/', views.activatejwt, name='activatejwt'),
     path('upload/', views.upload, name='upload'),
+   #  path('create/', views.create, name='create'),
+# path('note/', views.note, name='note'),
+    path('notes/<int:pk>/', views.NotesApi.as_view(), name='note_detail'),
+    path('notes/', views.NotesCreate.as_view(), name='notes'),
+
+    #  path('delete_note/', views.delete_note, name='delete_note'),
+   # path('update/', views.update_note, name='update'),
 
     path('password_reset/(?P<uidb64>[0-9A-Za-z_\-]+)/'
          '(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/',
