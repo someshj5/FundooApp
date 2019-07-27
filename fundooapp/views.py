@@ -17,7 +17,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse
 from django.core.mail import EmailMessage
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+# from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.encoding import force_text
@@ -164,9 +164,7 @@ def activatejwt(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError):
-        user = None
-    try:
+
         if user is not None:
             if not user.is_active:
                 payload = {
@@ -180,11 +178,16 @@ def activatejwt(request, uidb64, token):
                     login(request, user)
                     return HttpResponse('Your account has been activate successfully')
             else:
+
                 return HttpResponse('already activated or false')
         else:
             raise ValueError
+
     except ValueError:
         return Response({'error': 'Enter Valid Data'}, status=400)
+
+    except User.DoesNotExist:
+        return Response({'error': 'user does not exist'}, status=404)
 
 
 def activate(request, uidb64, token):
@@ -198,7 +201,7 @@ def activate(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, Profile.DoesNotExist):
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
 
     try:
@@ -386,4 +389,5 @@ class NotesApi(APIView):
             note_ser.save()
 
         return Response(note_ser.data, status=200)
+
 
