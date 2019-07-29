@@ -26,9 +26,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .tokens import account_activation_token
-from .models import Profile, Notes
-from .serializers import ProfileSerializers, NoteSerializers
+from .models import Profile, Notes, ProfilePic, Label
+from .serializers import ProfileSerializers, NoteSerializers, LabelSerializers
 from .service import Redis
+import pickle
 from .s3_transfer import S3Upload
 from .decorators import requiredLogin
 
@@ -58,8 +59,7 @@ def logoutuser(request):
     # return Response({'successfully logout'}, status=200)
 
 
-# @login_user_required
-# @requiredLogin
+
 @method_decorator(requiredLogin)
 def home(request):
     # print("+++++++++++++++")
@@ -332,7 +332,11 @@ def upload(request):
     if request.method == "POST":
         image = request.FILES.get('IMAGE')
         if imghdr.what(image):
+            print('-------->')
             x = S3Upload.transfer(request, image)
+            snap = ProfilePic(profile_pic=x)
+            snap.save()
+
             if x:
                 return HttpResponse('File uploaded to s3')
         else:
@@ -340,10 +344,11 @@ def upload(request):
 
 
 class NotesCreate(APIView):
-
     def get(self, request):
         noted = Notes.objects.all()
         notedata = NoteSerializers(noted, many=True)
+        obj = pickle.dumps(notedata.data)
+        r.set('note', obj)
         return Response(notedata.data, status=200)
 
     def post(self, request):
@@ -352,13 +357,13 @@ class NotesCreate(APIView):
             'message': 'something went wrong ',
             'data': []
         }
-
         print(request.data)
         serialize = NoteSerializers(data=request.data)
         try:
             print(serialize)
             if serialize.is_valid():
                 obj = serialize.save()
+                print(obj, "=======X")
                 response = get_custom_response(success=True, message='Note successfully created', status=201)
             else:
                 response = get_custom_response(message='data is not valid')
@@ -389,5 +394,99 @@ class NotesApi(APIView):
             note_ser.save()
 
         return Response(note_ser.data, status=200)
+
+
+class LabelCreate(APIView):
+
+    def get(self, request):
+        noted = Label.objects.all()
+        notedata = LabelSerializers(noted, many=True)
+        return Response(notedata.data, status=200)
+
+    def post(self, request):
+        response = {
+            'success': False,
+            'message': 'something went wrong ',
+            'data': []
+        }
+        print(request.data)
+        serialize = LabelSerializers(data=request.data)
+        try:
+            print(serialize)
+            if serialize.is_valid():
+                obj = serialize.save()
+                print(obj, "=======X")
+                response = get_custom_response(success=True, message='Note successfully created', status=201)
+            else:
+                response = get_custom_response(message='data is not valid')
+                raise ValueError
+        except ValueError:
+            pass
+        return response
+
+
+class LabelApi(APIView):
+
+    def get(self, request, pk):
+        noted = Label.objects.get(pk=pk)
+        notedata = LabelSerializers(noted)
+        return Response(notedata.data, status=200)
+
+    def delete(self, request, pk):
+        note = Label.objects.get(pk=pk)
+        print(note)
+        note.delete()
+        return Response({'successfully deleted'}, status=200)
+
+    def put(self, request, pk):
+        note = Label.objects.get(pk=pk)
+        note_ser = LabelSerializers(instance=note, data=request.data, partial=True)
+
+        if note_ser.is_valid(raise_exception=True):
+            note_ser.save()
+
+        return Response(note_ser.data, status=200)
+
+
+class Trash(APIView):
+
+    def get(self, request):
+        note_trash = Notes.objects.filter(is_Trash=True)
+        note = NoteSerializers(note_trash, many=True)
+        if note:
+            return Response(note.data, status=200)
+        else:
+            return Response({'message': 'nothing in trash'}, status=400)
+
+
+class Archived(APIView):
+    def get(self, request):
+        note_archive = Notes.objects.filter(is_archive=True)
+        note = NoteSerializers(note_archive, many=True)
+        if note:
+            return Response(note.data, status=200)
+        else:
+            return Response({'message': 'no archives found'}, status=400)
+
+
+class Reminder(APIView):
+
+    def get(self, request):
+        reminder = Notes.objects.filter(reminder__isnull=False)
+        notes = NoteSerializers(reminder, many=True)
+
+        if notes:
+            return Response(notes.data, status=200)
+        else:
+            return Response({'message': 'reminder not set'}, status=400)
+
+
+
+
+
+
+
+
+
 
 

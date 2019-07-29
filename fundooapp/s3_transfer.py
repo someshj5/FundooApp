@@ -4,6 +4,7 @@
 import boto3
 
 
+
 class S3Upload:
     """
     The Class for S3 file uploading at S3 bucket
@@ -15,10 +16,16 @@ class S3Upload:
         :return: returns True
         """
         s3 = boto3.client('s3')
-        imagename = 'some'
+        imagename = image.name
+        print(imagename)
         # print('dasdsa2222222222', imagename)
-        s3.upload_fileobj(image, 'somesh-static', imagename)
-        return True
+        s3.upload_fileobj(image, 'somesh-static', str(imagename))
+
+        url = '{}/{}/{}'.format(s3.meta.endpoint_url, 'somesh-static', imagename)
+
+        print(url)
+        return url
+        # return True
 
 
 

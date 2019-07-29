@@ -4,9 +4,8 @@ to be converted to native Python datatypes that can then
 be easily rendered into JSON, XML or other content types
 """
 from rest_framework import serializers
-from .models import Profile
 from django.contrib.auth.models import User
-from .models import Notes
+from .models import Notes, Label
 
 
 class ProfileSerializers(serializers.ModelSerializer):
@@ -27,9 +26,16 @@ class ProfileSerializers(serializers.ModelSerializer):
             'password'
         )
 
+class LabelSerializers(serializers.ModelSerializer):
+
+    class Meta:
+        model = Label
+        fields = '__all__'
+
 
 class NoteSerializers(serializers.ModelSerializer):
 
+    label = LabelSerializers(many=True)
     class Meta:
 
         model = Notes
@@ -47,3 +53,10 @@ class NoteSerializers(serializers.ModelSerializer):
             'color',
             'user'
         )
+
+
+
+
+
+
+
