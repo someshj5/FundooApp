@@ -70,8 +70,6 @@ def home(request):
     """
     return render(request, 'home.html')
 
-# adding comment
-
 @api_view(["POST"])
 def signup_view(request):
     """
