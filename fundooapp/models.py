@@ -13,14 +13,16 @@ class Profile(models.Model):
     created_date = models.DateField(auto_now_add=True)
     password = models.CharField(max_length=100)
 
+
 class Label(models.Model):
     name = models.CharField(max_length=255,blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
 
+
 class Notes(models.Model):
     title = models.CharField(max_length=999, blank=True, null=True)
     text = models.CharField(max_length=999, blank=True, null=True)
-    label = models.ManyToManyField(Label)
+    # label = models.ManyToManyField(Label, default=1)
     picture = models.ImageField(null=True, blank=True)
     collaborator = models.CharField(max_length=255, blank=True, null=True)
     is_archive = models.BooleanField(default=False)

@@ -7,6 +7,10 @@
 import json
 import imghdr
 import jwt
+from django.core.serializers.json import DjangoJSONEncoder
+
+from .documents import NotesDocument
+
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.decorators import method_decorator
@@ -14,8 +18,11 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.utils.http import urlsafe_base64_decode
 from django.template.loader import render_to_string
-from django.http import HttpResponse
-from django.core.mail import EmailMessage
+from django.template.loader import get_template
+from django.template import Context
+
+from django.http import HttpResponse, JsonResponse
+from django.core.mail import EmailMessage, send_mail
 from django.shortcuts import render
 # from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
@@ -24,6 +31,7 @@ from django.utils.encoding import force_text
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.core.mail import EmailMultiAlternatives
 
 from .tokens import account_activation_token
 from .models import Profile, Notes, ProfilePic, Label
@@ -32,8 +40,9 @@ from .service import Redis
 import pickle
 from .s3_transfer import S3Upload
 from .decorators import requiredLogin
-
+import short_url
 r = Redis()
+
 
 def get_custom_response(success=False,message='something went wrong',data=[],status=400):
     response = {
@@ -43,8 +52,6 @@ def get_custom_response(success=False,message='something went wrong',data=[],sta
     }
 
     return  Response(response,status=status)
-
-
 
 
 def logoutuser(request):
@@ -59,7 +66,6 @@ def logoutuser(request):
     # return Response({'successfully logout'}, status=200)
 
 
-
 @method_decorator(requiredLogin)
 def home(request):
     # print("+++++++++++++++")
@@ -70,6 +76,7 @@ def home(request):
     """
     return render(request, 'home.html')
 
+
 @api_view(["POST"])
 def signup_view(request):
     """
@@ -78,35 +85,27 @@ def signup_view(request):
     :return: returns a account activation link at the users email
     """
     if request.method == 'POST':
-        # username = request.POST.get('username')
-        # password = request.POST.get('password')
         serializer = ProfileSerializers(data=request.data)
-        # print('xyz')
         try:
             if serializer.is_valid():
                 serdata = serializer.save()
                 current_site = get_current_site(request)
                 subject = 'Activate your fproject Account'
-                message = render_to_string('account_activation_email.html', {
+                message = render_to_string('account_active.html', {
                     'user': serdata,
                     'domain': current_site.domain,
                     'uid': urlsafe_base64_encode(force_bytes(serdata.id)),
                     'token': account_activation_token.make_token(serdata),
                 })
                 to_email = serdata.email
-                email = EmailMessage(subject, message, to=[to_email])
-                email.send()
-                # print('xyz')
                 return HttpResponse('We have sent you an email, please confirm '
                                     'your email address to complete registration')
             # return Response(serializer.data)
             else:
                 raise ValueError
-                # return Response({'status_code': 400, 'message': 'something went wrong'})
         except ValueError:
             return Response({'error': 'Enter Valid Data'}, status=400)
-    else:
-        return Response({'status_code': 400, 'message': 'something went wrong'})
+    # return Response({'status_code': 400, 'message': 'something went wrong'})
 
 
 @api_view(['POST'])
@@ -131,16 +130,34 @@ def signupjwt(request):
                         'id': user.id,
                         'email': user.email
                     }
+                    shorturl = short_url.encode(user.id)
                     token = jwt.encode(payload, "SECRET_KEY", algorithm="HS256")
                     current_site = get_current_site(request)
                     subject = 'Activate your fundooapp project Account'
-                    message = render_to_string('account_active.html',
-                                               {'user': user, 'domain': current_site.domain,
-                                                'uid': urlsafe_base64_encode(force_bytes(user.id)),
-                                                'token': token, })
+                    abc='done'
+
+                    # message = render('fundooapp:demo.html', abc)
+                                               # {'user': user, 'domain': current_site.domain,
+                                               #  'uid': urlsafe_base64_encode(force_bytes(user.id)),
+                                               #  'token': token,
+                                               #  'shorturl': shorturl
+                                               #  })
                     to_email = user.email
-                    email = EmailMessage(subject, message, to=[to_email])
-                    email.send()
+                    # email = EmailMessage(subject, message, to=[to_email])
+                    # email.send()
+                    send_mail(
+                        'Thanks for signing up!',
+                        get_template('account_active.html').render
+                            ({
+                                'user': user, 'domain': current_site.domain,
+                                'uid': urlsafe_base64_encode(force_bytes(user.id)),
+                                'token': token,
+                                'shorturl': shorturl
+                            }),
+                        'fundooj5@gmail.com.com',
+                        [to_email],
+                        fail_silently=True
+                    )
                     return HttpResponse('We have sent you an email, please '
                                         'confirm your email address to complete registration')
                 else:
@@ -359,7 +376,7 @@ class NotesCreate(APIView):
         print(request.data)
         serialize = NoteSerializers(data=request.data)
         try:
-            print(serialize)
+            print(serialize.is_valid())
             if serialize.is_valid():
                 obj = serialize.save()
                 print(obj, "=======X")
@@ -368,8 +385,7 @@ class NotesCreate(APIView):
                 response = get_custom_response(message='data is not valid')
                 raise ValueError
         except ValueError:
-            pass
-        return response
+            return response
 
 
 class NotesApi(APIView):
@@ -480,12 +496,69 @@ class Reminder(APIView):
             return Response({'message': 'reminder not set'}, status=400)
 
 
+@api_view(["GET"])
+def search(request):
 
+    q = request.POST.get('q')
 
+    if q:
+        print(q, '--------->')
+        posts = NotesDocument.search().query("match", title=q)
+        print('=====>', posts)
+        # # print(p)
+        # dict={'data':[]}
+        # dict= json.dumps(dict)
+        # print(dict)
+        # d= json.load(dict)
+        # for i in posts:
+        #     d['data'].append(i)
+        #
+        # return Response(dict, status=200)
+        jsondata =[
 
+        ]
+        data = {'data': posts}
 
+        for i in data['data']:
+            data1 = {}
+            data1['title'] = i.title
+            data1['text'] = i.text
+            data1['id'] = i.id
+            jsondata.append(data1)
 
-
-
+        print(jsondata)
+    else:
+        posts = ''
+    return Response(jsondata, status=200)
+    # return JsonResponse(mydata, safe=False)
+    # return Response(notedata, status=200)
+    # return render(request, 'form.html', {'data': posts})
+    # if request.method == 'GET':
+    #     note = request.data.get('note')
+    #     try:
+    #         print("kljkhnjk", note)
+    #         if note:
+    #             print("here")
+    #             # post = NotesDocument.search().query("match", title=note)
+    #             post = NotesDocument.search().filter("term", text='somesh notes')[:30]
+    #             print("<------", post.values(id))
+    #             for i in post:
+    #                 print(i)
+    #             # qs = post.to_queryset()
+    #             # for car in qs:
+    #             #     print("---->", car)
+    #
+    #             # return JsonResponse(post, safe=False)
+    #
+    #             # print('iamhere', json.dumps(post))
+    #             # return render(request, 'form.html', {'data':post})
+    #             return HttpResponse ('A')
+    #
+    #
+    #             # return Response({'message': 'note search'}, status=200)
+    #         else:
+    #             raise ValueError
+    #     except ValueError:
+    #         return Response({'error': 'no data'}, status=400)
 
 

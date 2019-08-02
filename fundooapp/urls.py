@@ -22,9 +22,9 @@ urlpatterns = [
 
     path('upload/', views.upload, name='upload'),
 
-    path('notes/<int:pk>/', views.NotesApi.as_view(), name='note_detail'),
     path('notes/', views.NotesCreate.as_view(), name='notes'),
-
+    path('notes/<int:pk>/', views.NotesApi.as_view(), name='note_detail'),
+    path('search/', views.search, name='search'),
 
     path('label/<int:pk>/', views.LabelApi.as_view(), name='label_detail'),
     path('label/', views.LabelCreate.as_view(), name='label'),
@@ -34,7 +34,6 @@ urlpatterns = [
     path('archive/', views.Archived.as_view(), name='archive'),
     path('reminder/', views.Reminder.as_view(), name='reminder'),
 
-    path('password_reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/',
-         views.password_reset, name='password_reset')
+    path('password_reset/<uidb64>/<token>/', views.password_reset, name='password_reset')
 
 ]

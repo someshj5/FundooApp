@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-
 from dotenv import load_dotenv, find_dotenv
 from pathlib import *
 load_dotenv(find_dotenv())
@@ -44,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 'pylint_django',
+    'django_elasticsearch_dsl',
     'social_django',
     'fundooapp',
 
@@ -102,6 +102,13 @@ LOGIN_REDIRECT_URL = 'fundooapp:home'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'localhost:9200'
+    },
+}
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -122,7 +129,7 @@ CACHES = {
         }
     }
 }
-
+#
 # CACHES = {
 #     'default': {
 #         'BACKEND': 'django_redis.cache.RedisCache',
@@ -184,6 +191,9 @@ REST_FRAMEWORK = {
     ),
 
 }
+
+Bitly = os.getenv('Bitly')
+API_KEY = os.getenv('API_KEY')
 
 
 EMAIL_USE_TLS= os.getenv('EMAIL_USE_TLS')

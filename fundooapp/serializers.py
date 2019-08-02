@@ -26,6 +26,7 @@ class ProfileSerializers(serializers.ModelSerializer):
             'password'
         )
 
+
 class LabelSerializers(serializers.ModelSerializer):
 
     class Meta:

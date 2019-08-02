@@ -10,6 +10,8 @@ r = redis.StrictRedis(host='localhost', port='6379', db=0)
 
 
 class Redis:
+
+
     """
     Class Redis with set get and flush methods
     """
@@ -35,3 +37,8 @@ class Redis:
         :return: removes the value of the specific key assigning it to nil
         """
         r.flushall()
+
+# --------------------------------------------------------------------------------------------
+
+
+
