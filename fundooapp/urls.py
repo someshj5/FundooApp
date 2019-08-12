@@ -18,7 +18,7 @@ urlpatterns = [
 
 
     path('forgot_password/', views.forgot_password, name='forgot_password'),
-    path('activatejwt/<uidb64>/<token>/', views.activatejwt, name='activatejwt'),
+    path('activatejwt/<token>/', views.activatejwt, name='activatejwt'),
 
     path('upload/', views.upload, name='upload'),
 
@@ -29,6 +29,7 @@ urlpatterns = [
     path('label/<int:pk>/', views.LabelApi.as_view(), name='label_detail'),
     path('label/', views.LabelCreate.as_view(), name='label'),
 
+    path('collaborators/<int:pk>/', views.collaborator_view, name='collaborators'),
 
     path('trash/', views.Trash.as_view(), name='trash'),
     path('archive/', views.Archived.as_view(), name='archive'),

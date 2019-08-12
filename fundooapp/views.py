@@ -10,6 +10,7 @@ import jwt
 from django.core.serializers.json import DjangoJSONEncoder
 
 from .documents import NotesDocument
+from .tasks import send_email
 
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
@@ -51,7 +52,7 @@ def get_custom_response(success=False,message='something went wrong',data=[],sta
         'data': data
     }
 
-    return  Response(response,status=status)
+    return Response(response, status=status)
 
 
 def logoutuser(request):
@@ -123,45 +124,61 @@ def signupjwt(request):
         try:
             if serializer.is_valid():
                 # print('valid')
-                user = serializer.save()
-
+                # user = serializer.save()
+                user = User.objects.get(id=1)
                 if user:
                     payload = {
                         'id': user.id,
                         'email': user.email
                     }
                     shorturl = short_url.encode(user.id)
-                    token = jwt.encode(payload, "SECRET_KEY", algorithm="HS256")
                     current_site = get_current_site(request)
+                    domain = current_site.domain
+                    token = jwt.encode(payload, "SECRET_KEY", algorithm="HS256")
                     subject = 'Activate your fundooapp project Account'
-                    abc='done'
-
-                    # message = render('fundooapp:demo.html', abc)
-                                               # {'user': user, 'domain': current_site.domain,
-                                               #  'uid': urlsafe_base64_encode(force_bytes(user.id)),
-                                               #  'token': token,
-                                               #  'shorturl': shorturl
-                                               #  })
+                    message = render_to_string('account_active.html', {
+                        'user': user,
+                        'domain': domain,
+                        'token': token,
+                    })
                     to_email = user.email
-                    # email = EmailMessage(subject, message, to=[to_email])
+                    send_email.delay(subject, message, to_email)
+                    # current_site = get_current_site(request)
+                    # subject = 'Activate your fundooapp project Account'
+                    # abc='done'
+                    #
+                    # message = render_to_string('account_active.html', {
+                    #     'user': user,
+                    #     'domain': current_site.domain,
+                    #     'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    #     'token': token,
+                    #     'shorturl':shorturl
+                    # })
+                    # to_email = user.email
+                    # email = EmailMessage(
+                    #     subject, message, to=[to_email]
+                    # )
                     # email.send()
-                    send_mail(
-                        'Thanks for signing up!',
-                        get_template('account_active.html').render
-                            ({
-                                'user': user, 'domain': current_site.domain,
-                                'uid': urlsafe_base64_encode(force_bytes(user.id)),
-                                'token': token,
-                                'shorturl': shorturl
-                            }),
-                        'fundooj5@gmail.com.com',
-                        [to_email],
-                        fail_silently=True
-                    )
+                    # to_email = user.email
+                    # # email = EmailMessage(subject, message, to=[to_email])
+                    # # email.send()
+                    # send_mail(
+                    #     'Thanks for signing up!',
+                    #     render_to_string('account_active.html')
+                    #         ({
+                    #             'user': user, 'domain': current_site.domain,
+                    #             # 'uid': urlsafe_base64_encode(force_bytes(user.id)),
+                    #             'token': token,
+                    #             'shorturl': shorturl
+                    #         }),
+                    #     'fundooj5@gmail.com.com',
+                    #     [to_email],
+                    #     fail_silently=True
+                    # )
                     return HttpResponse('We have sent you an email, please '
                                         'confirm your email address to complete registration')
                 else:
-                    raise ValueError
+                    return HttpResponse('not a user')
             else:
                 raise ValueError
         except ValueError:
@@ -169,7 +186,7 @@ def signupjwt(request):
 
 
 @api_view(['GET'])
-def activatejwt(request, uidb64, token):
+def activatejwt(request, token):
     """
     This method is used for account activation link completion
     :param request: request for uidb64 and token
@@ -178,8 +195,12 @@ def activatejwt(request, uidb64, token):
     :return: returns Httpresponse for successful account activation
     """
     try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
+        user_info = jwt.decode(token, "SECRET_KEY", algorithm="HS256")
+        uid = user_info['id']
+        email = user_info['email']
         user = User.objects.get(pk=uid)
+        # uid = force_text(urlsafe_base64_decode(uidb64))
+        # user = User.objects.get(pk=uid)
 
         if user is not None:
             if not user.is_active:
@@ -360,65 +381,140 @@ def upload(request):
 
 
 class NotesCreate(APIView):
+    """
+    This method creates notes for the application
+    """
     def get(self, request):
-        noted = Notes.objects.all()
-        notedata = NoteSerializers(noted, many=True)
-        obj = pickle.dumps(notedata.data)
-        r.set('note', obj)
-        return Response(notedata.data, status=200)
+        """
+
+        :param request: request for data
+        :return: returns the response
+        """
+        try:
+            noted = Notes.objects.all()
+            if noted:
+                notedata = NoteSerializers(noted, many=True)
+                obj = pickle.dumps(notedata.data)
+                r.set('note', obj)
+                return Response(notedata.data, status=200)
+            else:
+                raise ValueError
+        except ValueError:
+            return Response({'error': 'no such notes'}, status=404)
 
     def post(self, request):
+        """
+
+        :param request: request for data
+        :return: returns the response
+        """
         response = {
             'success': False,
             'message': 'something went wrong ',
             'data': []
         }
-        print(request.data)
+        # print(request.data)
         serialize = NoteSerializers(data=request.data)
+        print(serialize)
         try:
             print(serialize.is_valid())
             if serialize.is_valid():
                 obj = serialize.save()
                 print(obj, "=======X")
-                response = get_custom_response(success=True, message='Note successfully created', status=201)
+                response = get_custom_response(success=True,
+                                               message='Note successfully created',
+                                               data=serialize.data,
+                                               status=201)
             else:
-                response = get_custom_response(message='data is not valid')
+                response = get_custom_response(message=serialize.errors)
                 raise ValueError
         except ValueError:
-            return response
+            response = get_custom_response(message="value Error")
+        return response
 
 
 class NotesApi(APIView):
+    """
+    This methods are for updating, deleting and getting the notes created.
+    """
 
     def get(self, request, pk):
-        noted = Notes.objects.get(pk=pk)
-        notedata = NoteSerializers(noted)
-        return Response(notedata.data, status=200)
+        """
+        :param request: request for data
+        :return: returns the response
+        """
+        try:
+            noted = Notes.objects.get(pk=pk)
+            if noted:
+                notedata = NoteSerializers(noted)
+                return Response(notedata.data, status=200)
+            else:
+                raise ValueError
+        except ValueError:
+            return Response({'error': 'no such notes'}, status=404)
 
     def delete(self, request, pk):
-        note = Notes.objects.get(pk=pk)
-        print(note)
-        note.delete()
-        return Response({'successfully deleted'}, status=200)
+        """
+        :param request: request for data
+        :return: returns the response
+        """
+        try:
+            note = Notes.objects.get(pk=pk)
+            if note:
+                print(note)
+                note.delete()
+                return Response({'successfully deleted'}, status=200)
+            else:
+                raise ValueError
+        except ValueError:
+            return Response({'error': 'no such notes'}, status=404)
 
     def put(self, request, pk):
-        note = Notes.objects.get(pk=pk)
-        note_ser = NoteSerializers(instance=note, data=request.data, partial=True)
+        """
+        :param request: request for data
+        :return: returns the response
+        """
+        try:
+            note = Notes.objects.get(pk=pk)
+            if note:
+                note_ser = NoteSerializers(instance=note, data=request.data, partial=True)
 
-        if note_ser.is_valid(raise_exception=True):
-            note_ser.save()
-
-        return Response(note_ser.data, status=200)
+                if note_ser.is_valid(raise_exception=True):
+                    note_ser.save()
+                    return Response(note_ser.data, status=200)
+                else:
+                    return Response({'message': 'not a valid data'}, status=400)
+            else:
+                raise ValueError
+        except ValueError:
+            return Response({'error': 'no such notes'}, status=404)
 
 
 class LabelCreate(APIView):
+    """
+    This method is for the creating the label for the specific notes
+    """
 
     def get(self, request):
-        noted = Label.objects.all()
-        notedata = LabelSerializers(noted, many=True)
-        return Response(notedata.data, status=200)
+        """
+        :param request: request for data
+        :return: returns the response
+        """
+        try:
+            noted = Label.objects.all()
+            if noted:
+                notedata = LabelSerializers(noted, many=True)
+                return Response(notedata.data, status=200)
+            else:
+                raise ValueError
+        except ValueError:
+            return Response({'error': 'no such label'}, status=404)
 
     def post(self, request):
+        """
+        :param request: request for data
+        :return: returns the response
+        """
         response = {
             'success': False,
             'message': 'something went wrong ',
@@ -431,79 +527,124 @@ class LabelCreate(APIView):
             if serialize.is_valid():
                 obj = serialize.save()
                 print(obj, "=======X")
-                response = get_custom_response(success=True, message='Note successfully created', status=201)
+                response = get_custom_response(success=True, message='Label successfully created', status=201)
             else:
-                response = get_custom_response(message='data is not valid')
                 raise ValueError
         except ValueError:
-            pass
-        return response
+            return response
 
 
 class LabelApi(APIView):
 
     def get(self, request, pk):
-        noted = Label.objects.get(pk=pk)
-        notedata = LabelSerializers(noted)
-        return Response(notedata.data, status=200)
+        """
+        :param request: request for data
+        :return: returns the response
+        """
+        try:
+            noted = Label.objects.get(pk=pk)
+            if noted:
+                notedata = LabelSerializers(noted)
+                return Response(notedata.data, status=200)
+            else:
+                raise ValueError
+        except ValueError:
+            return Response({'error': 'no such label'}, status=404)
 
     def delete(self, request, pk):
-        note = Label.objects.get(pk=pk)
-        print(note)
-        note.delete()
-        return Response({'successfully deleted'}, status=200)
+        """
+        :param request: request for data
+        :return: returns the response
+        """
+        try:
+            note = Label.objects.get(pk=pk)
+            if note:
+                print(note)
+                note.delete()
+                return Response({'successfully deleted'}, status=200)
+            else:
+                raise ValueError
+        except ValueError:
+            return Response({'error': 'no such label'}, status=404)
 
     def put(self, request, pk):
-        note = Label.objects.get(pk=pk)
-        note_ser = LabelSerializers(instance=note, data=request.data, partial=True)
-
-        if note_ser.is_valid(raise_exception=True):
-            note_ser.save()
-
-        return Response(note_ser.data, status=200)
+        """
+        :param request: request for data
+        :return: returns the response
+        """
+        try:
+            note = Label.objects.get(pk=pk)
+            if note:
+                note_ser = LabelSerializers(instance=note, data=request.data, partial=True)
+                if note_ser.is_valid(raise_exception=True):
+                    note_ser.save()
+                    return Response(note_ser.data, status=200)
+                else:
+                    return Response({'message': 'not a valid data'}, status=400)
+            else:
+                raise ValueError
+        except ValueError:
+            return Response({'error': 'no such label'}, status=404)
 
 
 class Trash(APIView):
-
     def get(self, request):
-        note_trash = Notes.objects.filter(is_Trash=True)
-        note = NoteSerializers(note_trash, many=True)
-        if note:
-            return Response(note.data, status=200)
-        else:
+        """
+        :param request: request for data
+        :return: returns the response
+        """
+        try:
+            note_trash = Notes.objects.filter(is_Trash=True)
+            note = NoteSerializers(note_trash, many=True)
+            if note:
+                return Response(note.data, status=200)
+            else:
+                raise ValueError
+        except ValueError:
             return Response({'message': 'nothing in trash'}, status=400)
 
 
 class Archived(APIView):
     def get(self, request):
-        note_archive = Notes.objects.filter(is_archive=True)
-        note = NoteSerializers(note_archive, many=True)
-        if note:
-            return Response(note.data, status=200)
-        else:
+        """
+        :param request: request for data
+        :return: returns the response
+        """
+        try:
+            note_archive = Notes.objects.filter(is_archive=True)
+            note = NoteSerializers(note_archive, many=True)
+            if note:
+                return Response(note.data, status=200)
+            else:
+                raise ValueError
+        except ValueError:
             return Response({'message': 'no archives found'}, status=400)
 
 
 class Reminder(APIView):
-
     def get(self, request):
-        reminder = Notes.objects.filter(reminder__isnull=False)
-        notes = NoteSerializers(reminder, many=True)
+        """
+        :param request: request for data
+        :return: returns the response
+        """
+        try:
+            reminder = Notes.objects.filter(reminder__isnull=False)
+            notes = NoteSerializers(reminder, many=True)
 
-        if notes:
-            return Response(notes.data, status=200)
-        else:
+            if notes:
+                return Response(notes.data, status=200)
+            else:
+                raise ValueError
+        except ValueError:
             return Response({'message': 'reminder not set'}, status=400)
 
 
 @api_view(["GET"])
 def search(request):
-
     q = request.POST.get('q')
-
     if q:
         print(q, '--------->')
-        posts = NotesDocument.search().query("match", title=q)
+        posts = NotesDocument.MultiSearch().query("match", title=q)
         print('=====>', posts)
         # # print(p)
         # dict={'data':[]}
@@ -561,4 +702,28 @@ def search(request):
     #     except ValueError:
     #         return Response({'error': 'no data'}, status=400)
 
+
+@api_view(['GET', 'POST'])
+def collaborator_view(request, pk):
+    email = request.data.get('email')
+    note = Notes.objects.get(pk=pk)
+    try:
+        if request.method == "GET":
+            if note:
+                serial_note = NoteSerializers(note)
+                return Response(serial_note.data, status=200)
+
+        if request.method == "POST":
+            if email:
+                print(email)
+                user = User.objects.get(email=email)
+                if user:
+                    note.collaborator.add(user.pk)
+                    return Response({'message': 'collaborator added successfully'}, status=201)
+            else:
+                raise ValueError
+    except User.DoesNotExist():
+        return Response({"error": "user does not exist"}, status=404)
+    except ValueError:
+        return Response({'error': 'Invalid details'}, status=400)
 

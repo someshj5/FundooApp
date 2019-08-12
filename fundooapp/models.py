@@ -15,29 +15,27 @@ class Profile(models.Model):
 
 
 class Label(models.Model):
-    name = models.CharField(max_length=255,blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    name = models.CharField(max_length=255,blank=True, null=True, unique=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class Notes(models.Model):
     title = models.CharField(max_length=999, blank=True, null=True)
     text = models.CharField(max_length=999, blank=True, null=True)
-    # label = models.ManyToManyField(Label, default=1)
+    label = models.ManyToManyField(Label, blank=True)
     picture = models.ImageField(null=True, blank=True)
-    collaborator = models.CharField(max_length=255, blank=True, null=True)
+    collaborator = models.ManyToManyField(User, blank=True, related_name='user_collaborator')
     is_archive = models.BooleanField(default=False)
     is_Trash = models.BooleanField(default=False)
     is_pinned = models.BooleanField(default=False)
-    reminder = models.DateTimeField(auto_now=True, blank=True, null=True)
+    reminder = models.DateTimeField(blank=True, null=True)
     url = models.URLField(max_length=200, blank=True, null=True)
     color = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
 
 
 class ProfilePic(models.Model):
     profile_pic = models.URLField(max_length=999, blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
-
-
 

@@ -16,7 +16,8 @@ class NotesDocument(DocType):
         fields = [
             "id",
             "title",
-            "text"
+            "text",
+            "reminder"
         ]
 
 
