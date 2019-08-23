@@ -177,3 +177,6 @@ docker-compose.yml
 
 .scannerwork/
 *.txt
+*.coveragerc
+*.coverage
+*.ini

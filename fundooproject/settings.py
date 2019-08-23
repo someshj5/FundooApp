@@ -13,24 +13,21 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 from dotenv import load_dotenv, find_dotenv
 from pathlib import *
+
 load_dotenv(find_dotenv())
-env_path = Path('.')/'.env'
+env_path = Path('.') / '.env'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -43,9 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 'pylint_django',
+    'rest_framework_swagger',
     'django_elasticsearch_dsl',
     'social_django',
     'fundooapp',
+    'notes',
+    'labels',
+    # 'users',
 
 ]
 
@@ -81,17 +82,17 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'fundooproject.wsgi.application'
+AUTH_USER_MODEL = 'fundooapp.User'
 
+WSGI_APPLICATION = 'fundooproject.wsgi.application'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-CELERY_BROKER_URL = 'amqp://localhost'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Asia/Kolkata'
-
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL'),
+CELERY_ACCEPT_CONTENT = os.getenv('CELERY_ACCEPT_CONTENT'),
+CELERY_TASK_SERIALIZER = os.getenv('CELERY_TASK_SERIALIZER'),
+CELERY_RESULT_SERIALIZER = os.getenv('CELERY_RESULT_SERIALIZER'),
+CELERY_TIMEZONE = os.getenv('CELERY_TIMEZONE'),
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.github.GithubOAuth2',
@@ -102,7 +103,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 LOGIN_URL = 'fundooapp:user_login'
-LOGOUT_URL = 'fundooapp:logout'
+# LOGOUT_URL = 'fundooapp:logout'
 LOGIN_REDIRECT_URL = 'fundooapp:home'
 
 # Database
@@ -110,41 +111,31 @@ LOGIN_REDIRECT_URL = 'fundooapp:home'
 
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': 'localhost:9200'
+        'hosts': os.getenv('hosts')
     },
 }
 
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'fundooproject',
+        'ENGINE':'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv('NAME'),
         'USER': 'fundoouser',
-        'PASSWORD': 'fundoo123456',
-        'HOST': 'localhost',
-        'PORT': '',
+        'PASSWORD': os.getenv('PASSWORD'),
+        'HOST': os.getenv('HOST'),
+        'PORT': os.getenv('PORT'),
     }
 }
 
 CACHES = {
     'default': {
-        'BACKEND': 'redis_cache.RedisCache',
-        'LOCATION': 'localhost:6379',
+        'BACKEND': os.getenv('BACKEND'),
+        'LOCATION': os.getenv('LOCATION'),
         'OPTIONS': {
-            'DB': 0,
+            'DB': os.getenv('DB'),
         }
     }
 }
-#
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django_redis.cache.RedisCache',
-#         'LOCATION': 'redis://127.0.0.1:6379/1',
-#         'OPTIONS': {
-#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-#         }
-#     }
-# }
+
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
@@ -163,7 +154,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -177,13 +167,15 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': (
+        'rest_framework.schemas.coreapi.AutoSchema'
+    ),
 
     # 'DEFAULT_PERMISSION_CLASSES': (
     #     'rest_framework.permissions.IsAuthenticated',
@@ -193,7 +185,7 @@ REST_FRAMEWORK = {
         # 'rest_framework_simplejwt.authentication.JWTAuthentication',
 
         #         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-#         'rest_framework.authentication.SessionAuthentication',
+        #         'rest_framework.authentication.SessionAuthentication',
     ),
 
 }
@@ -201,13 +193,11 @@ REST_FRAMEWORK = {
 Bitly = os.getenv('Bitly')
 API_KEY = os.getenv('API_KEY')
 
-
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
 EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = os.getenv('EMAIL_PORT')
-
 
 SOCIAL_AUTH_GITHUB_KEY = os.getenv('SOCIAL_AUTH_GITHUB_KEY')
 SOCIAL_AUTH_GITHUB_SECRET = os.getenv('SOCIAL_AUTH_GITHUB_SECRET')
