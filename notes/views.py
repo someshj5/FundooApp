@@ -115,14 +115,14 @@ class NotesCreate(APIView):
             print(serialize.errors)
             if serialize.is_valid():
                 obj = serialize.save()
-                print(obj, "=======X")
-                print(labels)
+                print(obj, "=======XXX")
+                print('===label', labels)
                 for i in labels:
                     lobj = Label.objects.get(id=i)
                     obj.label.add(lobj)
                 obj.save()
                 for i in collaborator:
-                    print(i, "=======X")
+                    print(i, "=======collab")
                     user = User.objects.get(id=i)
                     obj.collaborator.add(user)
                 obj.save()
@@ -132,7 +132,7 @@ class NotesCreate(APIView):
                                                status=201)
             else:
                 response = get_custom_response(message=serialize.errors)
-                raise ValueError
+                # raise ValueError
         except ValueError:
             response = get_custom_response(message="value Error")
         return response
@@ -182,17 +182,24 @@ class NotesApi(APIView):
         try:
             note = Notes.objects.get(pk=pk)
             if note:
-                note_ser = NoteSerializers(instance=note, data=request.data, partial=True)
+                note_ser = NoteSerializers(data=request.data, instance=note, partial=True)
+                print('.......', note)
+                print('=====<<<', note_ser)
 
                 if note_ser.is_valid(raise_exception=True):
-                    note_ser.save()
+                    print('valid')
+                    # note_ser.save()
+                    note.save()
+                    print('after save')
+                    print('noteser.data',note_ser.data)
+
                     return Response(note_ser.data, status=200)
                 else:
-                    return Response({'message': 'not a valid data'}, status=400)
+                    return Response(note_ser.errors, status=400)
             else:
                 raise ValueError
         except ValueError:
-            return Response({'error': 'no such notes'}, status=404)
+            return Response({"message": "no such note"}, status=404)
 
 
 class Trash(APIView):
@@ -234,7 +241,7 @@ class Archived(APIView):
         except ValueError:
             return Response({'message': 'no archives found'}, status=400)
 
-
+import datetime
 class Reminder(APIView):
     """
     This method is for reminder for notes
@@ -246,10 +253,12 @@ class Reminder(APIView):
         :return: returns the response
         """
         try:
-            reminder = Notes.objects.filter(reminder__isnull=False)
+            reminder = Notes.objects.filter(reminder= datetime.date.today())
             notes = NoteSerializers(reminder, many=True)
+            print(datetime.date)
 
             if notes:
+                
                 return Response(notes.data, status=200)
             else:
                 raise ValueError
@@ -319,4 +328,15 @@ def collaborator_view(request, pk):
         return Response({'error': 'Invalid details'}, status=400)
     except User.DoesNotExist:
         return Response({"error": "user does not exist"}, status=404)
+
+
+@api_view(['POST','GET'])
+def note_reminder(request,pk):
+    notes = Notes.objects.get(pk=pk)
+    if request.method == 'POST':
+        notes.reminder = datetime.date.today()
+        notes.save()
+        return Response({"message":"reminder date added"}, status=200)
+    else:
+        return Response(notes.data, status=200)
 

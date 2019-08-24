@@ -53,13 +53,14 @@ class LabelCreate(APIView):
         try:
             print(serialize)
             if serialize.is_valid():
+                print('valid')
                 obj = serialize.save()
                 print(obj, "=======X")
-                response = get_custom_response(success=True, message='Label successfully created', status=201)
+                return Response({"message": 'Label successfully created'}, status=201)
             else:
                 raise ValueError
         except ValueError:
-            return response
+            return Response(serialize.errors, status=201)
 
 
 class LabelApi(APIView):
