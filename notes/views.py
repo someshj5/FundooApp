@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from auth import requiredLogin
+from labels.serializers import LabelSerializers
 from notes.models import Notes, ProfilePic
 from notes.serializers import NoteSerializers
 from notes.service.s3_transfer import S3Upload
@@ -180,26 +181,25 @@ class NotesApi(APIView):
         :return: returns the response
         """
         try:
-            note = Notes.objects.get(pk=pk)
-            if note:
-                note_ser = NoteSerializers(data=request.data, instance=note, partial=True)
-                print('.......', note)
-                print('=====<<<', note_ser)
 
+            note_obj = Notes.objects.get(pk=pk)
+            if note_obj:
+                note_ser = NoteSerializers(data=request.data)
                 if note_ser.is_valid(raise_exception=True):
                     print('valid')
-                    # note_ser.save()
-                    note.save()
-                    print('after save')
-                    print('noteser.data',note_ser.data)
+                    note = note_ser.update(instance=note_obj, validated_data=request.data)
+                    print("-----------", note)
+                    if note:
 
-                    return Response(note_ser.data, status=200)
-                else:
-                    return Response(note_ser.errors, status=400)
+                        return Response(note_ser.data, status=200)
+                    else:
+                        return Response(note_ser.errors, status=400)
             else:
                 raise ValueError
-        except ValueError:
-            return Response({"message": "no such note"}, status=404)
+        except Exception as e:
+            return Response({"message": str(e)}, status=404)
+        except ValueError as e:
+            return Response({"message": "lklkdflkdsf"}, status=404)
 
 
 class Trash(APIView):

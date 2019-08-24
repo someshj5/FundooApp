@@ -5,44 +5,34 @@
 """
 #
 import json
-import imghdr
+
 import jwt
-from django.core.serializers.json import DjangoJSONEncoder
-
-from .tasks import send_email
-
-from django.contrib.auth.models import User
+from .tasks import RabbitService
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.utils.http import urlsafe_base64_decode
 from django.template.loader import render_to_string
-from django.template.loader import get_template
-from django.template import Context
 
-from django.http import HttpResponse, JsonResponse
-from django.core.mail import EmailMessage, send_mail
+
+from django.http import HttpResponse
+from django.core.mail import EmailMessage
 from django.shortcuts import render
-# from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
-from django.views.decorators.csrf import csrf_exempt
 from django.utils.encoding import force_text
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from django.core.mail import EmailMultiAlternatives
+
 
 from .tokens import account_activation_token
 from .models import User
 from .serializers import UserSerializers
 from .service import Redis
-import pickle
-from .s3_transfer import S3Upload
 from .decorators import requiredLogin
 import short_url
 r = Redis()
-#
+
 
 def get_custom_response(success=False,message='something went wrong',data=[],status=400):
     response = {
@@ -120,6 +110,7 @@ def signupjwt(request):
         # print(serializer)
         try:
             if serializer.is_valid():
+                rabbit_mq = RabbitService()
                 print('valid')
                 user = serializer.save()
                 user.set_password(user.password)
@@ -141,9 +132,9 @@ def signupjwt(request):
                         'token': token,
                     })
                     to_email = user.email
-                    send_email.apply_async((subject, message, to_email))
+                    # send_email.apply_async((subject, message, to_email))
+                    rabbit_mq.send_email(subject, message, to_email)
                     # send_email.delay(subject, message, to_email)
-
                     return HttpResponse('We have sent you an email, please '
                                         'confirm your email address to complete registration')
                 else:

@@ -13,9 +13,9 @@ class Notes(models.Model):
     """
     title = models.CharField(max_length=999, blank=True, null=True)
     text = models.CharField(max_length=999, blank=True, null=True)
-    label = models.ManyToManyField(Label, null=True)
+    label = models.ManyToManyField(Label, null=True,blank=True)
     picture = models.ImageField(null=True, blank=True)
-    collaborator = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='user_collaborator', null=True)
+    collaborator = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='user_collaborator', null=True, blank=True)
     is_archive = models.BooleanField(default=False)
     is_Trash = models.BooleanField(default=False)
     is_pinned = models.BooleanField(default=False)
