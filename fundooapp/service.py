@@ -5,16 +5,17 @@
     hyperloglogs, geospatial indexes with radius queries and streams.
 """
 import redis
-
-r = redis.StrictRedis(host='localhost', port='6379', db=0)
+from django.core.cache.backends import db
+from fundooproject.settings import host, port
 
 
 class Redis:
 
-
     """
     Class Redis with set get and flush methods
     """
+    def __init__(self):
+        self.r = redis.StrictRedis(host=host, port=port, db=db)
 
     def set(self, key, value):
         """
@@ -22,23 +23,23 @@ class Redis:
         :param value: value for a particular key
         :return: sets the key-value pair in cache
         """
-        r.set(key, value)
+        self.r.set(key, value)
 
     def get(self, key):
         """
         :param key: Returns all keys matching pattern
         :return: returns the value of the specific key
         """
-        value = r.get(key)
+        value = self.r.get(key)
         return value
 
     def flushall(self):
         """
         :return: removes the value of the specific key assigning it to nil
         """
-        r.flushall()
+        self.r.flushall()
 
-# --------------------------------------------------------------------------------------------
+
 
 
 

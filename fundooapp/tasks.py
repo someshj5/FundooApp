@@ -1,5 +1,7 @@
 import pika
 import json
+
+
 class RabbitService:
     def __init__(self):
         self.connection = pika.BlockingConnection( pika.ConnectionParameters(host='localhost') )
@@ -9,6 +11,7 @@ class RabbitService:
     def send_email(self, subject, message, to_email):
         email_data = {'subject': subject, 'message': message, 'email': to_email}
         message = json.dumps(email_data)
+        print(type(message))
         self.channel.basic_publish(
                                     exchange='',
                                     routing_key='email_queue',

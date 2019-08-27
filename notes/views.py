@@ -5,6 +5,7 @@
 """
 import imghdr
 import pickle
+import logging
 from fundooapp.models import User
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
@@ -14,15 +15,16 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from auth import requiredLogin
-from labels.serializers import LabelSerializers
+import datetime
 from notes.models import Notes, ProfilePic
 from notes.serializers import NoteSerializers
-from notes.service.s3_transfer import S3Upload
-from .service.Redis import Redis
+from notes.service.S3_transfer import S3Upload
+from fundooapp.service import Redis
 from labels.models import Label
-from .service.NotesDocuments import NotesDocument
-r = Redis()
+from notes.NotesDocuments import NotesDocument
+redisCache = Redis()
 s3 = S3Upload
+logger = logging.getLogger(__name__)
 
 
 def get_custom_response(success=False, message='something went wrong', data=[], status=400):
@@ -60,12 +62,14 @@ def upload(request):
                     picture = s3.transfer(request, image)
                     snap = ProfilePic(profile_pic=picture)
                     snap.save()
-
+                    logger.info("file upload success")
                     if picture:
                         return HttpResponse('File uploaded to s3')
                 else:
+                    logger.warning("only image file allowed")
                     HttpResponse('File other than image are not allowed')
             else:
+                logger.warning("not a image file")
                 raise ValueError
     except ValueError:
         return Response({'error': 'no image detected'}, status=400)
@@ -87,9 +91,11 @@ class NotesCreate(APIView):
             if noted:
                 notedata = NoteSerializers(noted, many=True)
                 obj = pickle.dumps(notedata.data)
-                r.set('note', obj)
+                redisCache.set('note', obj)
+                logger.info('All your Notes')
                 return Response(notedata.data, status=200)
             else:
+                logger.warning("note is not present")
                 raise ValueError
         except ValueError:
             return Response({'error': 'no such notes'}, status=404)
@@ -105,7 +111,6 @@ class NotesCreate(APIView):
             'message': 'something went wrong ',
             'data': []
         }
-        # print(request.data)
         labels = request.data.pop('label')
         collaborator = request.data.pop('collaborator')
 
@@ -113,27 +118,26 @@ class NotesCreate(APIView):
         print(serialize)
         try:
             print(serialize.is_valid())
-            print(serialize.errors)
             if serialize.is_valid():
                 obj = serialize.save()
-                print(obj, "=======XXX")
-                print('===label', labels)
                 for i in labels:
                     lobj = Label.objects.get(id=i)
                     obj.label.add(lobj)
                 obj.save()
                 for i in collaborator:
-                    print(i, "=======collab")
                     user = User.objects.get(id=i)
                     obj.collaborator.add(user)
                 obj.save()
+                logger.info("Note created")
                 response = get_custom_response(success=True,
                                                message='Note successfully created',
                                                data=serialize.data,
                                                status=201)
             else:
                 response = get_custom_response(message=serialize.errors)
-                # raise ValueError
+                logger.warning("not a valid info")
+                raise ValueError
+
         except ValueError:
             response = get_custom_response(message="value Error")
         return response
@@ -146,6 +150,7 @@ class NotesApi(APIView):
 
     def get(self, request, pk):
         """
+        :param pk: the primary key of note
         :param request: request for data
         :return: returns the response
         """
@@ -155,12 +160,14 @@ class NotesApi(APIView):
                 notedata = NoteSerializers(noted)
                 return Response(notedata.data, status=200)
             else:
+                logger.warning("no such note present in db")
                 raise ValueError
         except ValueError:
             return Response({'error': 'no such notes'}, status=404)
 
     def delete(self, request, pk):
         """
+        :param pk: the primary key of note
         :param request: request for data
         :return: returns the response
         """
@@ -171,12 +178,14 @@ class NotesApi(APIView):
                 note.delete()
                 return Response({'successfully deleted'}, status=200)
             else:
+                logger.warning("no such note present in db")
                 raise ValueError
         except ValueError:
             return Response({'error': 'no such notes'}, status=404)
 
     def put(self, request, pk):
         """
+        :param pk: the primary key of note
         :param request: request for data
         :return: returns the response
         """
@@ -195,6 +204,7 @@ class NotesApi(APIView):
                     else:
                         return Response(note_ser.errors, status=400)
             else:
+                logger.warning("no such note present in db")
                 raise ValueError
         except Exception as e:
             return Response({"message": str(e)}, status=404)
@@ -217,6 +227,7 @@ class Trash(APIView):
             if note:
                 return Response(note.data, status=200)
             else:
+                logger.warning("no such note present in db")
                 raise ValueError
         except ValueError:
             return Response({'message': 'nothing in trash'}, status=400)
@@ -237,11 +248,12 @@ class Archived(APIView):
             if note:
                 return Response(note.data, status=200)
             else:
+                logger.warning("no such note present in db")
                 raise ValueError
         except ValueError:
             return Response({'message': 'no archives found'}, status=400)
 
-import datetime
+
 class Reminder(APIView):
     """
     This method is for reminder for notes
@@ -258,9 +270,9 @@ class Reminder(APIView):
             print(datetime.date)
 
             if notes:
-                
                 return Response(notes.data, status=200)
             else:
+                logger.warning("no such note present in db")
                 raise ValueError
         except ValueError:
             return Response({'message': 'reminder not set'}, status=400)
@@ -275,9 +287,7 @@ def search(request):
     try:
         q = request.POST.get('q')
         if q:
-            print(q, '--------->')
-            posts = NotesDocument.MultiSearch().query("match", title=q)
-            print('=====>', posts)
+            posts = NotesDocument.Search().query("match", title=q)
 
             jsondata = []
             data = {'data': posts}
@@ -291,6 +301,7 @@ def search(request):
                 print(jsondata)
             return Response(jsondata, status=200)
         else:
+            logger.warning("no such note present in db")
             raise ValueError
     except ValueError:
         return Response({'error': 'something went wrong!'})
@@ -299,12 +310,10 @@ def search(request):
 @api_view(['GET', 'POST'])
 def collaborator_view(request, pk):
     """
-
     :param request: requesting user for id and email
     :param pk: users id
     :return: the response of collaborator added successfully
     """
-
     email = request.data.get('email')
     note = Notes.objects.get(pk=pk)
     try:
@@ -315,7 +324,6 @@ def collaborator_view(request, pk):
 
         if request.method == "POST":
             if email:
-                print(email)
                 user = User.objects.get(email=email)
                 if user:
                     if user in note.collaborator.all():
@@ -323,6 +331,7 @@ def collaborator_view(request, pk):
                     note.collaborator.add(user.pk)
                     return Response({'message': 'collaborator added successfully'}, status=201)
             else:
+                logger.warning("no email id present")
                 raise ValueError
     except ValueError:
         return Response({'error': 'Invalid details'}, status=400)

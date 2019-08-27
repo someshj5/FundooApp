@@ -1,4 +1,3 @@
-from django.shortcuts import render
 
 # Create your views here.
 from rest_framework.response import Response
@@ -8,7 +7,7 @@ from labels.models import Label
 from labels.serializers import LabelSerializers
 
 
-def get_custom_response(success=False,message='something went wrong', data=[], status=400):
+def get_custom_response(success=False, message='something went wrong', data=[], status=400):
     response = {
         'success': success,
         'message': message,
@@ -67,6 +66,7 @@ class LabelApi(APIView):
 
     def get(self, request, pk):
         """
+        :param pk: the primary key of label
         :param request: request for data
         :return: returns the response
         """
@@ -82,6 +82,7 @@ class LabelApi(APIView):
 
     def delete(self, request, pk):
         """
+        :param pk: the primary key of label
         :param request: request for data
         :return: returns the response
         """
@@ -98,6 +99,7 @@ class LabelApi(APIView):
 
     def put(self, request, pk):
         """
+        :param pk: the primary key of label
         :param request: request for data
         :return: returns the response
         """

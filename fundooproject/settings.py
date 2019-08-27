@@ -117,7 +117,7 @@ ELASTICSEARCH_DSL = {
 
 DATABASES = {
     'default': {
-        'ENGINE':'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.getenv('NAME'),
         'USER': 'fundoouser',
         'PASSWORD': os.getenv('PASSWORD'),
@@ -125,6 +125,9 @@ DATABASES = {
         'PORT': os.getenv('PORT'),
     }
 }
+
+host = os.getenv('host')
+port = os.getenv('port')
 
 CACHES = {
     'default': {

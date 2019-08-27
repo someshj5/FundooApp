@@ -3,7 +3,7 @@ urls for notes
 """
 from django.urls import path
 from django.conf.urls import url
-from .service import swagger_view
+from .service import Swagger_view
 from notes import views as v1
 from labels import views as v2
 
@@ -11,7 +11,7 @@ from labels import views as v2
 app_name = 'notes'
 
 urlpatterns = [
-    url(r'^swag/$', swagger_view.schema_view),
+    url(r'^swag/$', Swagger_view.schema_view),
     path('notes/', v1.NotesCreate.as_view(), name='notes'),
     path('notes/<int:pk>/', v1.NotesApi.as_view(), name='note_detail'),
 

@@ -2,10 +2,7 @@
 {% autoescape off %}
 Hi {{ user.username }},
 Please click on the link to confirm your registration,
-<table><tr><td>
-<a style="text-decoration:none; color:#0000FF;" href="http://{{ domain }}{% url 'fundooapp:activatejwt' token=token %}"> {{ shorturl }}
-</a>
-</td></tr></table>
+http://{{ domain }}{% url 'fundooapp:activatejwt' token=token %}"
 
 {% endautoescape %}
 

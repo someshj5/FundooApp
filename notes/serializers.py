@@ -19,19 +19,6 @@ class NoteSerializers(serializers.ModelSerializer):
         """
         model = Notes
         fields = "__all__"
-        #     'title',
-        #     'text',
-        #     'label',
-        #     'picture',
-        #     'collaborator',
-        #     'is_archive',
-        #     'is_Trash',
-        #     'is_pinned',
-        #     'reminder',
-        #     'url',
-        #     'color',
-        #     'user'
-        # ]
 
     def create(self, validated_data):
         return Notes.objects.create(**validated_data)

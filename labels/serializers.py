@@ -7,35 +7,6 @@ from rest_framework import serializers
 from labels.models import Label
 
 
-# class LabelSerializers(serializers.ModelSerializer):
-#
-#     class Meta:
-#         model = Label
-#         fields = '__all__'
-#
-#
-# class NoteSerializers(serializers.ModelSerializer):
-#
-#     label = LabelSerializers(many=True)
-#     class Meta:
-#
-#         model = Notes
-#         fields = (
-#             'title',
-#             'text',
-#             'label',
-#             'picture',
-#             'collaborator',
-#             'is_archive',
-#             'is_Trash',
-#             'is_pinned',
-#             'reminder',
-#             'url',
-#             'color',
-#             'user'
-#         )
-
-
 class LabelSerializers(serializers.ModelSerializer):
     """
     Class LabelSerializer using serializers.ModelSerializers

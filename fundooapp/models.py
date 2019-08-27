@@ -1,52 +1,25 @@
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
-from django.contrib.auth.models import User
-from django.conf import settings
-
-
-# Create your models here.
-
-
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.db import models
-
-
-# from .common import Common
 
 
 class UserManager(BaseUserManager):
-
-    # def _create_user(self, email, password, **extra_fields):
-    #     if not email:
-    #         raise ValueError("the given email must be set")
-    #     email = self.normalize_email(email)
-    #     user = self.model(email=email, **extra_fields)
-    #     user.set_password(password)
-    #     user.save()
-    #     return user
 
     def create_user(self, email, password=None, **extra_fields):
         user = self.model(email=self.normalize_email(email))
 
         user.set_password(password)
-        user.is_staff=False
-        user.is_admin =False
+        user.is_staff = False
+        user.is_admin = False
         user.save(self._db)
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
         user = self.model(email=self.normalize_email(email))
         user.set_password(password)
-        user.is_staff=True
-        user.is_admin =True
+        user.is_staff = True
+        user.is_admin = True
         user.save(self._db)
         return user
-
-    # def create_superuser(self, email, password, **extra_fields):
-    #     extra_fields.setdefault('is_superuser', True)
-    #
-    #     if extra_fields.get('is_superuser') is not True:
-    #         raise ValueError('Superuser must have  is_superuser=True')
-    #     return self._create_user(email, password, **extra_fields)
 
 
 class User(AbstractBaseUser):
@@ -80,10 +53,5 @@ class User(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return True
 
-
 # class ProfileInfo(models.Model):
 #     profile = models.OneToOneField(User, on_delete=models.CASCADE)
-
-
-
-

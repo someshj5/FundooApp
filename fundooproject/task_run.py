@@ -1,9 +1,8 @@
-import pika
-import json
-import time
-import smtplib
+import pika, json, time, smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+# from fundooproject import settings
+# settings.EMAIL_HOST, EMAIL_HOST_PASSWORD, EMAIL_HOST_USER, EMAIL_PORT
 
 
 email_obj = smtplib.SMTP(host='smtp.gmail.com', port=587)
