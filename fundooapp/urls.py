@@ -20,6 +20,7 @@ urlpatterns = [
 
 
     path('forgot_password/', views.forgot_password, name='forgot_password'),
+    # path('activate/', views.activate, name='forgot_password'),
     path('activatejwt/<token>/', views.activatejwt, name='activatejwt'),
 
 ]
