@@ -156,14 +156,10 @@ def user_login(request):
         password = request.data.get('password')
         try:
             print(request.data)
-            # obj = User.objects.get(email=email)
-            # print(obj)
-            user = authenticate(username=email, password=password)
+            user = authenticate(email=email, password=password)
+
+
             print(user, '----x')
-        #
-        except User.DoesNotExist:
-            user = None
-        try:
             if user:
                 payload = {
                     'id': user.id,
@@ -172,17 +168,21 @@ def user_login(request):
                 jwt_token = {'token': jwt.encode(
                     payload, "SECRET_KEY",
                     algorithm="HS256").decode('utf-8')}
-                r.set('token', jwt_token['token'])
+
+                # r.set('token', jwt_token['token'])
                 login(request, user)
-                return HttpResponse(
-                    json.dumps(jwt_token),
-                    status=200,
-                    content_type="application/json"
-                )
-            else:
-                raise ValueError
-        except ValueError:
+                return Response({'message': 'login successfull', 'token': jwt_token},
+                                status=200,
+                                )
+
+        except User.DoesNotExist:
             return Response({'error': 'Enter Valid Data'}, status=400)
+        #     else:
+        #         raise ValueError
+        # except ValueError:
+        #     return Response({'error': 'Enter Valid Data'}, status=400)
+
+        return HttpResponse({"success":True})
 
 
 @api_view(["POST"])
@@ -214,7 +214,7 @@ def forgot_password(request):
                 email = EmailMessage(subject, message, to=[to_email])
                 email.send()
                 # print('xyz')
-                return HttpResponse('We have sent you the link to reset your password')
+                return Response({'message':'We have sent you the link to reset your password'}, status=201)
             else:
                 raise ValueError
         except ValueError:
