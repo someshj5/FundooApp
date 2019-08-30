@@ -28,6 +28,7 @@ export default class Registration extends Component {
         }
         signupService(signupdata)
             .then(res => {
+                alert("HI Somya")
                 console.log("after signup", res.data)
             })
             .catch(error => {
@@ -47,9 +48,10 @@ export default class Registration extends Component {
         return (
 
             <div>
+                <form onSubmit={this.signupfun}>
                 <Card id='cardMain2' style={{ border: cardBorder }}>
                     <CardContent >
-                        <div className='titleTxt' >
+                        <div className='FundooSignupTitleTxt' >
                             <span className='title'>F</span>
                             <span className='title'>U</span>
                             <span className='title'>N</span>
@@ -57,10 +59,23 @@ export default class Registration extends Component {
                             <span className='title'>O</span>
                             <span className='title'>O</span>
                         </div>
-                        <form onSubmit={this.signupfun}>
-                            <div id="cardTxt">
-                                <div className="usermail">
+                        <div style={{
+                            color:"darkblue",
+                            fontSize:"19px",
+                            marginTop:"1em",
+                            marginLeft:"9em",
+
+                        }}>
+                            <p>    
+                                Create your fundooapp account
+                            </p>
+                        </div>
+
+                        
+                            <div>
+                                <div className="usermail" style={{marginTop:"3em"}}>
                                     <TextField className="UsernameTxt"
+                                        required
                                         onChange={this.onChange}
                                         id="outlined-email-input"
                                         label="Email"
@@ -69,8 +84,10 @@ export default class Registration extends Component {
                                         autoComplete="Email"
                                         margin="normal"
                                         variant="outlined"
+                                        
                                     />
                                     <TextField className="UsernameTxt"
+                                        required
                                         onChange={this.onChange}
                                         id="outlined-email-input"
                                         label="Username"
@@ -79,10 +96,12 @@ export default class Registration extends Component {
                                         autoComplete="Username"
                                         margin="normal"
                                         variant="outlined"
+                                        
                                     />
                                 </div>
                                 <div className="usermail">
                                     <TextField className="UsernameTxt"
+                                        required
                                         onChange={this.onChange}
                                         id="outlined-email-input"
                                         label="Firstname"
@@ -91,8 +110,10 @@ export default class Registration extends Component {
                                         autoComplete="Firstname"
                                         margin="normal"
                                         variant="outlined"
+                                        
                                     />
                                     <TextField className="UsernameTxt"
+                                        required
                                         onChange={this.onChange}
                                         id="outlined-email-input"
                                         label="Lastname"
@@ -101,10 +122,12 @@ export default class Registration extends Component {
                                         autoComplete="Lastname"
                                         margin="normal"
                                         variant="outlined"
+                                        
                                     />
                                 </div>
                                 <div className="passwordTxt">
                                     <TextField className="Passwordtxt"
+                                        required
                                         onChange={this.onChange}
                                         name="Password"
                                         id="outlined-password-input"
@@ -119,21 +142,23 @@ export default class Registration extends Component {
 
 
                             </div>
-                            <Button variant="contained"
-                                onClick={this.signupfun}
+                            <Button 
+                                variant="outlined"
+                                color="secondary"
+                                
                                 style={{
-                                    // width: "100px",
-                                    marginLeft: "5em",
+                                    width: "200px",
+                                    marginLeft: "200px",
                                     marginTop: "25px"
                                 }}
                                 className="loginBtn">
-                                SIGNUP
+                                REGISTER
                                         </Button>
 
-
-                        </form>
+                        
                     </CardContent>
                 </Card>
+                </form>
             </div>
         )
     }

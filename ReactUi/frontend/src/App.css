@@ -80,12 +80,10 @@
   padding: 3%;
   position:relative;
   margin-left: 50px;
-
   /* -webkit-tap-highlight-color: transparent; */
-
-
-
 }
+
+
 /* ---------------------------- login component --------------------------------------- */
 
 #cardMain{
@@ -98,13 +96,10 @@
 
 #cardMain2{
   margin-top:7em;
-  margin-left: 15em;
+  margin-left: 16em;
   width: 40rem;
   height: 35rem;
   border-radius: 15px;
-}
-#cardTxt{
-  /* display: flex; */
 }
 
 
@@ -116,6 +111,17 @@
   font-weight: 600;
   font-style: bold;
   text-transform: uppercase;
+}
+
+.FundooSignupTitleTxt{
+  margin-top: 20px;
+  margin-left: 7em;
+  font-family: 'Google Sans', Roboto, Arial,sans-serif;
+  font-size: 2rem;
+  font-weight: 600;
+  font-style: bold;
+  text-transform: uppercase;
+
 }
 
 
@@ -159,11 +165,19 @@
 
 
 .usermail{
-  margin:10px;
   display: flex;
   justify-content: space-around;
 }
 
 .passwordTxt{
-  margin-left:42px ;
+
+display: flex;
+justify-content: center
 }
+
+.resetEmailTxtf{
+  margin-top:1em;
+  display:flex;
+  justify-content: center
+}
+

@@ -1,124 +1,174 @@
 import React, { Component } from 'react'
-import { CardContent, TextField, Card, Button } from '@material-ui/core';
+import { TextField, Button } from '@material-ui/core';
 import '../App.css'
 import UserService from "../services/UserService"
 
 const loginService = new UserService().login_service
 
 export class Login extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
-            Email:"",
-            Password:""
-
-
+        this.state = {
+            Email: "",
+            Password: ""
         }
+        this.loginfun = this.loginfun.bind(this)
     }
 
-            
-    loginfun=()=>{
+
+
+    loginfun = event => {
+        event.preventDefault();
         console.log("Login function");
         var logindata = {
-            'email':this.state.Email,
+            'email': this.state.Email,
             'password': this.state.Password
 
         }
         loginService(logindata)
-        .then(res=>{
-            console.log("after login", res.data)
-        })
-        .catch(error=>{
-            console.log("error data",error.response.data)
-        })
+            .then(res => {
+                console.log("after login", res.data)
+            })
+            .catch(error => {
+                console.log("error data", error.response.data)
+            })
     }
 
-    onChange=(e)=>{
+    onChange = (e) => {
         this.setState({
-            [e.target.name]:e.target.value
+            [e.target.name]: e.target.value
         });
         console.log(this.state)
     }
 
     render() {
         var cardBorder = "1px solid lightblue"
-        var buttonbg = "rgb(255,140,0)"
-        var buttoncl = "rgb(255,255,255)"
+
         return (
-            <div>
-                <Card id='cardMain' style={{ border: cardBorder }}>
-                    <CardContent>
-                        <div className='titleTxt' >
-                            <span className='title'>F</span>
-                            <span className='title'>U</span>
-                            <span className='title'>N</span>
-                            <span className='title'>D</span>
-                            <span className='title'>O</span>
-                            <span className='title'>O</span>
-                        </div>
-                        <form onSubmit={this.loginfun}>
-                        <table id="table">
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <TextField className="UsernameTxt"
-                                            onChange={this.onChange}
-                                            id="outlined-email-input"
-                                            label="Email"
-                                            type="Email"
-                                            name="Email"
-                                            autoComplete="Email"
-                                            margin="normal"
-                                            variant="outlined"
-                                        />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <TextField className="Passwordtxt"
-                                            onChange={this.onChange}
-                                            name="Password"
-                                            id="outlined-password-input"
-                                            label="Password"
-                                            type="password"
-                                            autoComplete="current-password"
-                                            margin="normal"
-                                            variant="outlined"
-                                        />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <Button variant="contained"
-                                        onClick={this.loginfun} 
-                                            style={{
-                                            // width: "100px",
-                                            background:buttonbg,
-                                            color:buttoncl, 
-                                            marginLeft:"5em",
-                                            marginTop:"25px"}} 
-                                            className="loginBtn">
-                                            LOGIN
-                                        </Button>
+            // <form onSubmit={this.loginfun}>
 
-                                    </td>
-                                </tr>
-                         
-                            </tbody>
-                        </table>
-                        </form>
-                        
-                        <div id="signupLink">
-                        <a href="www.google.com">Signup for fundooNotes</a>
-                        </div>
+            // <div id='cardMain' style={{ border: cardBorder }}>
 
-                        <div id="signupLink">
-                        <a href="www.google.com">Forgot your password?</a>
-                        </div>
+            // <div className='titleTxt' >
+            //     <span className='title'>F</span>
+            //     <span className='title'>U</span>
+            //     <span className='title'>N</span>
+            //     <span className='title'>D</span>
+            //     <span className='title'>O</span>
+            //     <span className='title'>O</span>
+            // </div>
+            //             <table id="table">
+            //                 <tbody>
+            //                     <tr>
+            //                         <td>
+            //                             <TextField className="UsernameTxt"
+            //                              required
+            //                                 onChange={this.onChange}
+            //                                 label="Email"
+            //                                 type="Email"
+            //                                 name="Email"
+            //                                 margin="normal"
+            //                                 variant="outlined"
+            //                             />
+            //                         </td>
+            //                     </tr>
+            //                     <tr>
+            //                         <td>
+            //                             <TextField className="Passwordtxt"
+            //                             required
+            //                                 onChange={this.onChange}
+                                            // name="Password"
+                                            // label="Password"
+                                            // type="password"
+                                            // margin="normal"
+                                            // variant="outlined"
+            //                             />
+            //                         </td>
+            //                     </tr>
+            //                     <tr>
+            //                         <td>
+            // <Button
+            // onSubmit={this.loginfun} 
+            //     variant="outlined"
+            //     color="secondary" 
+            //     style={{
+            //     marginLeft:"5em",
+            //     marginTop:"25px"}} 
+            //     className="loginBtn">
+            //     LOGIN
+            // </Button>
 
-                    </CardContent>
-                </Card>
-            </div>
+            //                         </td>
+            //                     </tr>
+
+            //                 </tbody>
+            //             </table>
+
+            // <div id="signupLink">
+            // <a href="www.google.com">Signup for fundooNotes</a>
+            // </div>
+
+            // <div id="signupLink">
+            // <a href="www.google.com">Forgot your password?</a>
+            // </div>
+
+            // </div>
+            // </form>
+            <form onSubmit={this.loginfun} id='cardMain' style={{ border: cardBorder }}>
+                <div className='titleTxt' >
+                    <span className='title'>F</span>
+                    <span className='title'>U</span>
+                    <span className='title'>N</span>
+                    <span className='title'>D</span>
+                    <span className='title'>O</span>
+                    <span className='title'>O</span>
+                </div>
+                <div id="table">
+                    <TextField
+                        required
+                        className="UsernameTxt"
+                        variant="outlined"
+                        margin="normal"
+                        label="Email"
+                        type="Email"
+                        onChange={this.onChange}
+                        name="Email"
+                    />
+                    <TextField
+                        required
+                        className="PasswordTxt"
+                        variant="outlined"
+                        margin="normal"
+                        label="Password"
+                        type="Password"
+                        onChange={this.onChange}
+                        name="Password"
+                    />
+                </div>
+
+                <Button
+                    type="submit"
+                    variant="outlined"
+                    color="secondary"
+                    value="Login"
+                    style={{
+                        width: "200px",
+                        marginLeft: "9em",
+                        marginTop: "25px"
+                    }}
+                >
+                    Login
+                    </Button>
+
+                <div id="signupLink">
+                    <a href="/signup">Signup for fundooNotes</a>
+                </div>
+
+                <div id="signupLink">
+                    <a href="/resetpassword">Forgot your password?</a>
+                </div>
+            </form>
+
         )
     }
 }
