@@ -145,6 +145,7 @@ export default class Registration extends Component {
                             <Button 
                                 variant="outlined"
                                 color="secondary"
+                                type="submit"
                                 
                                 style={{
                                     width: "200px",
@@ -155,7 +156,10 @@ export default class Registration extends Component {
                                 REGISTER
                                         </Button>
 
-                        
+                <div style={{marginTop:'2em' , marginLeft:250}}  >
+                    <p style={{marginLeft:38, fontWeight:500}}>OR</p>
+                    <a href="/login">Login in stead</a>
+                </div>
                     </CardContent>
                 </Card>
                 </form>

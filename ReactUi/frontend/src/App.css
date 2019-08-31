@@ -94,6 +94,7 @@
   border-radius: 15px;
 }
 
+
 #cardMain2{
   margin-top:7em;
   margin-left: 16em;
@@ -106,6 +107,15 @@
 .titleTxt{
   margin-top: 20px;
   margin-left: 150px;
+  font-family: 'Google Sans', Roboto, Arial,sans-serif;
+  font-size: 2rem;
+  font-weight: 600;
+  font-style: bold;
+  text-transform: uppercase;
+}
+.titleTxtreset{
+  margin-top: 20px;
+  margin-left: 170px;
   font-family: 'Google Sans', Roboto, Arial,sans-serif;
   font-size: 2rem;
   font-weight: 600;
@@ -181,3 +191,29 @@ justify-content: center
   justify-content: center
 }
 
+/* ------------------- Drawer ----------------------------- */
+
+.DrawerNote{
+  display: flex;
+  margin:18px;
+  width: 200px;
+  align-items: flex;
+  font-family: 'Product Sans',Arial,sans-serif;
+  color:rgb(88, 86, 86);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.DrawerNote p {
+margin-top: 6px;
+margin-left:25px;
+
+}
+
+.labelhead{
+  font-size:10px ;
+  font-weight:850; 
+  font-family:Arial; 
+  margin:10px;
+  color:rgb(88, 86, 86)
+}

@@ -45,75 +45,7 @@ export class Login extends Component {
         var cardBorder = "1px solid lightblue"
 
         return (
-            // <form onSubmit={this.loginfun}>
 
-            // <div id='cardMain' style={{ border: cardBorder }}>
-
-            // <div className='titleTxt' >
-            //     <span className='title'>F</span>
-            //     <span className='title'>U</span>
-            //     <span className='title'>N</span>
-            //     <span className='title'>D</span>
-            //     <span className='title'>O</span>
-            //     <span className='title'>O</span>
-            // </div>
-            //             <table id="table">
-            //                 <tbody>
-            //                     <tr>
-            //                         <td>
-            //                             <TextField className="UsernameTxt"
-            //                              required
-            //                                 onChange={this.onChange}
-            //                                 label="Email"
-            //                                 type="Email"
-            //                                 name="Email"
-            //                                 margin="normal"
-            //                                 variant="outlined"
-            //                             />
-            //                         </td>
-            //                     </tr>
-            //                     <tr>
-            //                         <td>
-            //                             <TextField className="Passwordtxt"
-            //                             required
-            //                                 onChange={this.onChange}
-                                            // name="Password"
-                                            // label="Password"
-                                            // type="password"
-                                            // margin="normal"
-                                            // variant="outlined"
-            //                             />
-            //                         </td>
-            //                     </tr>
-            //                     <tr>
-            //                         <td>
-            // <Button
-            // onSubmit={this.loginfun} 
-            //     variant="outlined"
-            //     color="secondary" 
-            //     style={{
-            //     marginLeft:"5em",
-            //     marginTop:"25px"}} 
-            //     className="loginBtn">
-            //     LOGIN
-            // </Button>
-
-            //                         </td>
-            //                     </tr>
-
-            //                 </tbody>
-            //             </table>
-
-            // <div id="signupLink">
-            // <a href="www.google.com">Signup for fundooNotes</a>
-            // </div>
-
-            // <div id="signupLink">
-            // <a href="www.google.com">Forgot your password?</a>
-            // </div>
-
-            // </div>
-            // </form>
             <form onSubmit={this.loginfun} id='cardMain' style={{ border: cardBorder }}>
                 <div className='titleTxt' >
                     <span className='title'>F</span>
