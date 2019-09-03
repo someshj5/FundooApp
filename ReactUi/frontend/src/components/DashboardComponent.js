@@ -7,9 +7,11 @@ import SearchIcon from '@material-ui/icons/Search'
 import InputBase from '@material-ui/core/InputBase'
 import Avatar from '@material-ui/core/Avatar'
 import '../App.css'
+import nature from '../nature.jpeg'
 import keep_icon from '../svg_icons/keep_icon.png'
 import LeftDrawer from './LeftDrawer'
 import { MenuItem, Menu } from '@material-ui/core'
+import Redirect from 'react-router-dom/Redirect'
 
 
 
@@ -19,10 +21,21 @@ export class DashboardComponent extends Component {
         this.state = {
             open: false,
             anchorEl: null,
-            menuOpen: false
+            menuOpen: false,
+            redirect:false
         }
         this.leftDfun = this.leftDfun.bind(this)
     }
+
+    componentWillMount(){
+        if (sessionStorage.getItem('userdata')){
+            console.log("call user feed")
+        }
+        else{
+            this.setState({redirect:true})
+        }
+    }
+
     leftDfun = event => {
         this.setState({
             open: !this.state.open
@@ -36,6 +49,13 @@ export class DashboardComponent extends Component {
         })
     }
 
+    logout=event=>{
+        sessionStorage.setItem("userdata","")
+        sessionStorage.clear();
+        this.setState({redirect:true})
+
+    }
+
     handleClose = event => {
         this.setState({
             menuOpen: !this.state.menuOpen,
@@ -43,6 +63,11 @@ export class DashboardComponent extends Component {
         })
     }
     render() {
+
+        if(this.state.redirect){
+            return (<Redirect to={'/login'}/>)
+        }
+
         return (
             <div className='root' id="main">
                 <AppBar position="static" color="default">
@@ -73,7 +98,7 @@ export class DashboardComponent extends Component {
 
                         </div>
                         <div className='desktopPic'>
-                            <Avatar src={''}
+                            <Avatar src={nature}
                                 aria-label="account of current user"
                                 aria-controls="menu-appbar"
                                 aria-haspopup="true"
@@ -97,7 +122,7 @@ export class DashboardComponent extends Component {
                         onClose={this.handleClose}
                         open={this.state.menuOpen}>
                         <MenuItem onClick={this.handleClose}>My Account</MenuItem>
-                        <MenuItem onClick={this.handleClose}>Sign out</MenuItem>
+                        <MenuItem onClick={this.logout}>Sign out</MenuItem>
 
                     </Menu>
                 </AppBar>
@@ -108,4 +133,5 @@ export class DashboardComponent extends Component {
 }
 
 export default DashboardComponent
+
 

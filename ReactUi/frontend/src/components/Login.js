@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { TextField, Button } from '@material-ui/core';
 import '../App.css'
 import UserService from "../services/UserService"
+import Redirect from 'react-router-dom/Redirect'
 
 const loginService = new UserService().login_service
 
@@ -10,7 +11,8 @@ export class Login extends Component {
         super(props);
         this.state = {
             Email: "",
-            Password: ""
+            Password: "",
+            redirect: false
         }
         this.loginfun = this.loginfun.bind(this)
     }
@@ -22,16 +24,23 @@ export class Login extends Component {
         console.log("Login function");
         var logindata = {
             'email': this.state.Email,
-            'password': this.state.Password
-
+            'password': this.state.Password,
+        
         }
+
+
         loginService(logindata)
             .then(res => {
                 console.log("after login", res.data)
+                sessionStorage.setItem('userdata', res.data)
+                this.setState({ redirect: true })
             })
+
             .catch(error => {
                 console.log("error data", error.response.data)
             })
+    
+
     }
 
     onChange = (e) => {
@@ -42,7 +51,16 @@ export class Login extends Component {
     }
 
     render() {
+
         var cardBorder = "1px solid lightblue"
+
+        if (this.state.redirect) {
+            return (<Redirect to={"/dashboard"} />)
+        };
+
+        if (sessionStorage.getItem('userdata')) {
+            return (<Redirect to={"/dashboard"} />)
+        }
 
         return (
 
@@ -99,10 +117,11 @@ export class Login extends Component {
                 <div id="signupLink">
                     <a href="/resetpassword">Forgot your password?</a>
                 </div>
+
             </form>
 
         )
     }
-}
 
+    }
 export default Login

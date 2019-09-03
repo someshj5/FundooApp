@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { Card, CardContent, TextField, Button } from '@material-ui/core';
 import "../App.css"
 import UserService from '../services/UserService'
+import Redirect from 'react-router-dom/Redirect'
+
 
 const signupService = new UserService().signup_service
 
@@ -13,7 +15,8 @@ export default class Registration extends Component {
             Username: '',
             Firstname: '',
             Lastname: '',
-            Password: ''
+            Password: '',
+            redirect:false
         }
     }
 
@@ -26,10 +29,14 @@ export default class Registration extends Component {
             'last_name': this.state.Lastname,
             'password': this.state.Password
         }
+        this.setState({redirect:true})
+
         signupService(signupdata)
             .then(res => {
-                alert("HI Somya")
+                sessionStorage.setItem('userdata', res.data)
                 console.log("after signup", res.data)
+                this.setState({ redirect: true })
+
             })
             .catch(error => {
                 console.log("error data", error.response.data)
@@ -44,6 +51,10 @@ export default class Registration extends Component {
     }
     render() {
         var cardBorder = "1px solid lightblue"
+
+        if(this.state.redirect){
+            return (<Redirect to={"/dashboard"}/>)
+        }
 
         return (
 
@@ -77,11 +88,9 @@ export default class Registration extends Component {
                                     <TextField className="UsernameTxt"
                                         required
                                         onChange={this.onChange}
-                                        id="outlined-email-input"
                                         label="Email"
                                         type="Email"
                                         name="Email"
-                                        autoComplete="Email"
                                         margin="normal"
                                         variant="outlined"
                                         
@@ -89,11 +98,9 @@ export default class Registration extends Component {
                                     <TextField className="UsernameTxt"
                                         required
                                         onChange={this.onChange}
-                                        id="outlined-email-input"
                                         label="Username"
                                         type="Username"
                                         name="Username"
-                                        autoComplete="Username"
                                         margin="normal"
                                         variant="outlined"
                                         
@@ -103,11 +110,9 @@ export default class Registration extends Component {
                                     <TextField className="UsernameTxt"
                                         required
                                         onChange={this.onChange}
-                                        id="outlined-email-input"
                                         label="Firstname"
                                         type="Firstname"
                                         name="Firstname"
-                                        autoComplete="Firstname"
                                         margin="normal"
                                         variant="outlined"
                                         
@@ -115,11 +120,9 @@ export default class Registration extends Component {
                                     <TextField className="UsernameTxt"
                                         required
                                         onChange={this.onChange}
-                                        id="outlined-email-input"
                                         label="Lastname"
                                         type="Lastname"
                                         name="Lastname"
-                                        autoComplete="Lastname"
                                         margin="normal"
                                         variant="outlined"
                                         
@@ -130,10 +133,8 @@ export default class Registration extends Component {
                                         required
                                         onChange={this.onChange}
                                         name="Password"
-                                        id="outlined-password-input"
                                         label="Password"
                                         type="password"
-                                        autoComplete="current-password"
                                         margin="normal"
                                         variant="outlined"
 
