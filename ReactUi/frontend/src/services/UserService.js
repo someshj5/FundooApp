@@ -15,7 +15,7 @@ class UserService{
         return axios.post("http://localhost:8000/fundooapp/forgot_password/",data)
     }
 
-
+    
 
 }
 export default UserService;

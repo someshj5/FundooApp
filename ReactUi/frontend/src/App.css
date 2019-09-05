@@ -217,3 +217,68 @@ margin-left:25px;
   margin:10px;
   color:rgb(88, 86, 86)
 }
+
+.NoteCard{
+  /* height:auto; */
+  color:rgb(88, 86, 86);
+  word-wrap: break-word;
+  margin-top:1em;
+  margin-bottom: 1em;
+  width: 230px;
+  height: auto;
+  border-radius: 15px;
+  box-shadow:  3px 3px 5px 6px  #000000;
+
+}
+
+
+/*---------------------- Icon ----------------------------- */
+.flex-container {
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  /* background-color: DodgerBlue; */
+}
+
+.flex-container > div {
+  background-color: #f1f1f1;
+
+  margin: 8px;
+  text-align: center;
+  line-height: 20px;
+  font-size: 30px;
+}
+
+.flex-container img{
+  width: 20px;
+  height: 20px;
+}
+
+.AddnoteCard{
+  margin-top:7em;
+  margin-left: 22em;
+  width: 30rem;
+  height: 4rem;
+  border:1px solid rgb(192, 192, 192);
+}
+
+
+.AddnoteInputBase{
+  width: 90%;
+
+}
+
+/* .InputBase{
+  font: inherit;
+  color: currentColor;
+  width: 90%;
+  height: 1.1875em;
+  margin: 0;
+  display: block;
+  padding: 6px 0 7px;
+  margin-top: 10px;
+  background:transparent;
+  padding: 3%;
+  position:relative;
+  margin-left: 50px;
+  -webkit-tap-highlight-color: transparent; */

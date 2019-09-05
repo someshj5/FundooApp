@@ -5,13 +5,13 @@ import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/Menu'
 import SearchIcon from '@material-ui/icons/Search'
 import InputBase from '@material-ui/core/InputBase'
-import Avatar from '@material-ui/core/Avatar'
 import '../App.css'
-import nature from '../nature.jpeg'
 import keep_icon from '../svg_icons/keep_icon.png'
 import LeftDrawer from './LeftDrawer'
-import { MenuItem, Menu } from '@material-ui/core'
 import Redirect from 'react-router-dom/Redirect'
+import GetAllNotesComponent from './GetAllNotesComponent';
+import MenuComponent from './MenuComponent';
+import AddNoteComponent from './AddNoteComponent';
 
 
 
@@ -27,7 +27,7 @@ export class DashboardComponent extends Component {
         this.leftDfun = this.leftDfun.bind(this)
     }
 
-    componentWillMount(){
+    componentDidMount(){
         if (sessionStorage.getItem('userdata')){
             console.log("call user feed")
         }
@@ -42,26 +42,6 @@ export class DashboardComponent extends Component {
         })
     }
 
-    handleMenu = event => {
-        this.setState({
-            menuOpen: true,
-            anchorEl: event.Target
-        })
-    }
-
-    logout=event=>{
-        sessionStorage.setItem("userdata","")
-        sessionStorage.clear();
-        this.setState({redirect:true})
-
-    }
-
-    handleClose = event => {
-        this.setState({
-            menuOpen: !this.state.menuOpen,
-            anchorEl: this.state.anchorEl
-        })
-    }
     render() {
 
         if(this.state.redirect){
@@ -97,38 +77,16 @@ export class DashboardComponent extends Component {
                             </div>
 
                         </div>
-                        <div className='desktopPic'>
-                            <Avatar src={nature}
-                                aria-label="account of current user"
-                                aria-controls="menu-appbar"
-                                aria-haspopup="true"
-                                onClick={this.handleMenu}
-                            />
-                        </div>
+                        
+                        <MenuComponent />
 
                     </Toolbar>
-                    <Menu
-                        id="menu-appbar"
-                        anchorEl={this.state.anchorEl}
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        keepMounted
-                        transformOrigin={{
-                          vertical: 'top',
-                          horizontal: 'right',
-                        }}
-                        onClose={this.handleClose}
-                        open={this.state.menuOpen}>
-                        <MenuItem onClick={this.handleClose}>My Account</MenuItem>
-                        <MenuItem onClick={this.logout}>Sign out</MenuItem>
-
-                    </Menu>
                 </AppBar>
                 <LeftDrawer open={this.state.open} />
+                <GetAllNotesComponent/>
+                <AddNoteComponent/>
             </div>
-        )
+        )           
     }
 }
 
