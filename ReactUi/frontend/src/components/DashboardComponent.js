@@ -83,8 +83,8 @@ export class DashboardComponent extends Component {
                     </Toolbar>
                 </AppBar>
                 <LeftDrawer open={this.state.open} />
-                <GetAllNotesComponent/>
                 <AddNoteComponent/>
+                <GetAllNotesComponent/>
             </div>
         )           
     }

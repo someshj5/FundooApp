@@ -4,9 +4,9 @@ import "../App.css"
 import archiveIcon from '../svg_icons/archive_menu.svg'
 import reminderIcon from '../svg_icons/reminder.svg'
 import collaboratorIcon from '../svg_icons/collaborator.svg'
-import colorPalleteIcon from '../svg_icons/colorPallete.svg'
 import addimageIcon from '../svg_icons/addimage.svg'
 import moreIcon from '../svg_icons/more.svg'
+import ColorComponent from './ColorComponent';
 
 
 
@@ -25,7 +25,7 @@ export default class NoteItem extends Component {
                         <div className="flex-container">
                             <div><img src={reminderIcon} alt="archiveIcon" /></div>
                             <div><img src={collaboratorIcon} alt="archiveIcon" /></div>
-                            <div><img src={colorPalleteIcon} alt="archiveIcon" /></div>
+                            <div><ColorComponent/></div>
                             <div><img src={addimageIcon} alt="archiveIcon" /></div>
                             <div><img src={archiveIcon} alt="archiveIcon" /></div>
                             <div><img src={moreIcon} alt="archiveIcon" /></div>

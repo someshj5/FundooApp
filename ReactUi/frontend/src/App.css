@@ -257,7 +257,7 @@ margin-left:25px;
 .AddnoteCard{
   margin-top:7em;
   margin-left: 22em;
-  width: 30rem;
+  width: 40rem;
   height: 4rem;
   border:1px solid rgb(192, 192, 192);
 }
@@ -268,17 +268,24 @@ margin-left:25px;
 
 }
 
-/* .InputBase{
-  font: inherit;
-  color: currentColor;
-  width: 90%;
-  height: 1.1875em;
-  margin: 0;
-  display: block;
-  padding: 6px 0 7px;
-  margin-top: 10px;
-  background:transparent;
-  padding: 3%;
-  position:relative;
-  margin-left: 50px;
-  -webkit-tap-highlight-color: transparent; */
+.AddnoteCard2{
+  margin-top:7em;
+  margin-left: 22em;
+  width: 40rem;
+  height: auto;
+  border:1px solid rgb(192, 192, 192);
+
+}
+
+.NoteTextField{
+  width:90%
+}
+
+#closeBtnNote{
+  margin-left: 305px;
+  font-family: 'Roboto',arial,sans-serif;;
+  cursor: pointer;
+  font-size: 90%;
+  font-weight: 600
+}
+

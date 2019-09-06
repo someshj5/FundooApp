@@ -18,8 +18,7 @@ export default class MenuComponent extends Component {
         sessionStorage.clear();
         this.setState({redirect:true})
 
-    }
-        
+    }  
     handleMenu = event => {
         this.setState({
             menuOpen: true,
