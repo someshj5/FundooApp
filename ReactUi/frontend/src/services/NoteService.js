@@ -7,6 +7,7 @@ class NoteService{
     }
 
     createNote(data){
+
         return axios.post("http://localhost:8000/notes/notes/", data)
     }
 

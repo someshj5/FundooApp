@@ -16,8 +16,7 @@ export default class MenuComponent extends Component {
     logout=event=>{
         sessionStorage.setItem("userdata","")
         sessionStorage.clear();
-        this.setState({redirect:true})
-
+        this.props.signOut()
     }  
     handleMenu = event => {
         this.setState({

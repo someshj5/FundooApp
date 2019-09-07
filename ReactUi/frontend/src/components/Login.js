@@ -32,12 +32,14 @@ export class Login extends Component {
         loginService(logindata)
             .then(res => {
                 console.log("after login", res.data)
+                localStorage.setItem('token',res.data.token.token)
                 sessionStorage.setItem('userdata', res.data)
+                sessionStorage.setItem('userid', res.data.id )
                 this.setState({ redirect: true })
             })
 
             .catch(error => {
-                console.log("error data", error.response.data)
+                console.log("error data", error.response)
             })
     
 

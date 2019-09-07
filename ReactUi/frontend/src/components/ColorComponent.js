@@ -25,9 +25,10 @@ export default class ColorComponent extends Component {
                 {value:"#e8eaed"},
 
             ],
-            color:'',
         }
     }
+
+
 
 
     handleMenu = e =>{
@@ -45,15 +46,16 @@ export default class ColorComponent extends Component {
         })
     }
 
-    changeColor = e =>{
-        console.log("update color",e.currentTarget.name)
+    changeColor = event =>{
+        this.props.changeColor(event.target.id)
+        console.log("update color",event.currentTarget.id)
     }
 
     render() {
 
         const colorPalette = this.state.colors.map((colorp)=>{
             return <Avatar
-                name={colorp.value}
+                id={colorp.value}
                 key={colorp.value}
                 onClick={this.changeColor}  
                 style={{borderWidth: 1,
@@ -68,7 +70,7 @@ export default class ColorComponent extends Component {
             <div>
                 <img 
                 aria-controls="menu-appbar"
-                aria-haspopup="true"
+                // aria-haspopup="true"
                 onClick={this.handleMenu} 
                 src={colorPalleteIcon}
                 alt="colorPalleteIcon" />

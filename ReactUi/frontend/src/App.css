@@ -241,7 +241,7 @@ margin-left:25px;
 }
 
 .flex-container > div {
-  background-color: #f1f1f1;
+  /* background-color: #f1f1f1; */
 
   margin: 8px;
   text-align: center;
@@ -289,3 +289,7 @@ margin-left:25px;
   font-weight: 600
 }
 
+.dialogbox{
+  height:30px;
+  width: 40px
+}

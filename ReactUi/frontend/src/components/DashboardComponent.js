@@ -9,10 +9,15 @@ import '../App.css'
 import keep_icon from '../svg_icons/keep_icon.png'
 import LeftDrawer from './LeftDrawer'
 import Redirect from 'react-router-dom/Redirect'
-import GetAllNotesComponent from './GetAllNotesComponent';
+// import GetAllNotesComponent from './GetAllNotesComponent';
 import MenuComponent from './MenuComponent';
 import AddNoteComponent from './AddNoteComponent';
+import NoteSection from './NoteSection';
+import NoteService from '../services/NoteService';
 
+
+
+const get_NotesAll = new NoteService().getNotesAll
 
 
 export class DashboardComponent extends Component {
@@ -22,12 +27,14 @@ export class DashboardComponent extends Component {
             open: false,
             anchorEl: null,
             menuOpen: false,
-            redirect:false
+            redirect:false,
+            notes:[]
         }
         this.leftDfun = this.leftDfun.bind(this)
     }
 
     componentDidMount(){
+        this.noteGetFunc();
         if (sessionStorage.getItem('userdata')){
             console.log("call user feed")
         }
@@ -42,6 +49,27 @@ export class DashboardComponent extends Component {
         })
     }
 
+    signOut=()=>{
+        this.setState({redirect:true})
+    }
+
+
+
+    noteGetFunc = e =>{
+
+        get_NotesAll()
+    .then(res =>{
+        this.setState({
+            notes:res.data.data
+        })
+    })
+
+    .catch(error =>{
+        console.log("error data", error.response.data)
+        
+    })
+    }
+
     render() {
 
         if(this.state.redirect){
@@ -54,8 +82,8 @@ export class DashboardComponent extends Component {
 
                     <Toolbar className='ToolBar' >
 
-                        <IconButton edge="start" color="" aria-label="menu" >
-                            <MenuIcon onClick={this.leftDfun} />
+                        <IconButton  onClick={this.leftDfun} edge="start" color="inherit" aria-label="menu" >
+                            <MenuIcon  />
                         </IconButton>
 
                         <div className='imgFundoo'>
@@ -78,13 +106,14 @@ export class DashboardComponent extends Component {
 
                         </div>
                         
-                        <MenuComponent />
+                        <MenuComponent signOut={this.signOut} />
 
                     </Toolbar>
                 </AppBar>
                 <LeftDrawer open={this.state.open} />
-                <AddNoteComponent/>
-                <GetAllNotesComponent/>
+                <AddNoteComponent noteGetFunc={this.noteGetFunc}/>
+                <NoteSection note={this.state.notes}/>
+
             </div>
         )           
     }
