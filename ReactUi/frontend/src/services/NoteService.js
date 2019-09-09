@@ -20,8 +20,8 @@ class NoteService{
         return axios.delete("http://localhost:8000/notes/notes/<int:pk>/", data)
     }
 
-    updateANote(data){
-        return axios.put("http://localhost:8000/notes/notes/<int:pk>/",data)
+    updateANote(data,id){
+        return axios.put("http://localhost:8000/notes/notes/"+id+"/",data)
     }
 
 }

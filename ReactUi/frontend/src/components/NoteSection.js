@@ -6,7 +6,7 @@ import Grid from '@material-ui/core/Grid';
 export default class NoteSection extends Component {
     render() {
         const notes = this.props.note.map((noteobj) =>(
-            <NoteItem key={noteobj.id} noteobj={noteobj}/>
+            <NoteItem  noteGetFunc={this.props.noteGetFunc} key={noteobj.id} noteobj={noteobj}/>
         ))
         return (
             <Grid  

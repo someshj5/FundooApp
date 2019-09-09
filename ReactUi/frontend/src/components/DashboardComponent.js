@@ -112,7 +112,7 @@ export class DashboardComponent extends Component {
                 </AppBar>
                 <LeftDrawer open={this.state.open} />
                 <AddNoteComponent noteGetFunc={this.noteGetFunc}/>
-                <NoteSection note={this.state.notes}/>
+                <NoteSection  noteGetFunc={this.noteGetFunc} note={this.state.notes}/>
 
             </div>
         )           

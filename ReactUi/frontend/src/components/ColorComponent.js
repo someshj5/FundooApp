@@ -2,14 +2,22 @@ import React, { Component } from 'react'
 import { Menu, Avatar, Grid } from '@material-ui/core';
 import colorPalleteIcon from '../svg_icons/colorPallete.svg'
 import "../App.css"
+import NoteService from '../services/NoteService'
 
+
+
+
+const UpdateFunc = new NoteService().updateANote
 
 export default class ColorComponent extends Component {
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state={
+            id: props.id,
             menuOpen:false,
             anchorEl:null,
+            label: props.label,
+            collaborator: props.collaborator,
             colors:[
                 {value:"#fff"},
                 {value:"#f28b82"},
@@ -46,9 +54,29 @@ export default class ColorComponent extends Component {
         })
     }
 
+
+
     changeColor = event =>{
         this.props.changeColor(event.target.id)
         console.log("update color",event.currentTarget.id)
+    
+        let UpdateData ={
+            "color": event.target.id,
+            "label":this.state.label,
+            "collaborator": this.state.collaborator
+        }
+
+        UpdateFunc(UpdateData, this.state.id)
+        .then(res=>{
+            this.props.noteGetFunc()
+            this.setState({DialogOpen:false})
+
+            console.log(" after update", res);
+
+        })
+        .catch(error=>{
+            console.log("error data", error)
+        })
     }
 
     render() {

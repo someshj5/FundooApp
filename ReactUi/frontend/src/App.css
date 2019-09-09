@@ -290,6 +290,33 @@ margin-left:25px;
 }
 
 .dialogbox{
-  height:30px;
-  width: 40px
+  position: relative;
+  margin:10px;
+  width: 1200px;
+  height: auto;
+
+}
+
+.flex-containerDialog {
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  /* background-color: DodgerBlue; */
+  margin-right: 330px;
+
+}
+
+
+.flex-containerDialog > div {
+  /* background-color: #f1f1f1; */
+  cursor: pointer;
+  margin: 8px;
+  text-align: center;
+  line-height: 20px;
+  font-size: 30px;
+}
+
+.flex-containerDialog img{
+  width: 20px;
+  height: 20px;
 }
