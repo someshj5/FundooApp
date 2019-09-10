@@ -11,13 +11,13 @@ class NoteService{
         return axios.post("http://localhost:8000/notes/notes/", data)
     }
 
-    getANote(data){
-        return axios.get("http://localhost:8000/notes/notes/<int:pk>/", data)
+    getANote(data,id){
+        return axios.get("http://localhost:8000/notes/notes/"+id+"/", data)
     }
 
 
-    delANote(data){
-        return axios.delete("http://localhost:8000/notes/notes/<int:pk>/", data)
+    delANote(data,id){
+        return axios.delete("http://localhost:8000/notes/notes/"+id+"/", data)
     }
 
     updateANote(data,id){

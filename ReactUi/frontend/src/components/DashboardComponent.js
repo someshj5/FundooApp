@@ -57,7 +57,7 @@ export class DashboardComponent extends Component {
 
     noteGetFunc = e =>{
 
-        get_NotesAll()
+    get_NotesAll()
     .then(res =>{
         this.setState({
             notes:res.data.data
@@ -78,7 +78,7 @@ export class DashboardComponent extends Component {
 
         return (
             <div className='root' id="main">
-                <AppBar position="static" color="default">
+                <AppBar position="fixed" color="default">
 
                     <Toolbar className='ToolBar' >
 
@@ -111,7 +111,7 @@ export class DashboardComponent extends Component {
                     </Toolbar>
                 </AppBar>
                 <LeftDrawer open={this.state.open} />
-                <AddNoteComponent noteGetFunc={this.noteGetFunc}/>
+                <AddNoteComponent noteGetFunc={this.noteGetFunc} />
                 <NoteSection  noteGetFunc={this.noteGetFunc} note={this.state.notes}/>
 
             </div>

@@ -54,8 +54,6 @@ export default class ColorComponent extends Component {
         })
     }
 
-
-
     changeColor = event =>{
         this.props.changeColor(event.target.id)
         console.log("update color",event.currentTarget.id)
@@ -104,17 +102,6 @@ export default class ColorComponent extends Component {
                 alt="colorPalleteIcon" />
 
                 <Menu
-                // anchorReference="anchorPosition"
-                // anchorPosition={{ top: 456, left: 320 }}
-                // anchorOrigin={{
-                //     vertical: 'bottom',
-                //     horizontal: 'right',
-                //   }}
-                //   transformOrigin={{
-                //     vertical: 'top',
-                //     horizontal: 'right',
-                //   }}
-                
                 id="menu-appbar"
                 style={{width:250}}
                 anchorEl={this.state.anchorEl}

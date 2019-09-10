@@ -14,10 +14,9 @@ export default class NoteSection extends Component {
             justify="space-around" 
             alignContent="center" 
             style={{
-                 
-                width:750,
+                width:850,
                 marginTop:100,
-                marginLeft:200
+                marginLeft:250
                 }}>
 
                 {notes}

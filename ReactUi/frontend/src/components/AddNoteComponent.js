@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import { Card, CardContent, InputBase, CardActions } from '@material-ui/core';
 import "../App.css"
-import archiveIcon from '../svg_icons/archive_menu.svg'
-import reminderIcon from '../svg_icons/reminder.svg'
+import archiveIcon from '../svg_icons/archive.svg'
 import collaboratorIcon from '../svg_icons/collaborator.svg'
 import addimageIcon from '../svg_icons/addimage.svg'
 import ColorComponent  from './ColorComponent'
 import NoteService from '../services/NoteService'
 import MoreIconComponent from './MoreIconComponent'
+import ReminderComponent from './ReminderComponent';
 
 var createNote = new NoteService().createNote
 
@@ -140,13 +140,14 @@ export default class AddNoteComponent extends Component {
                     </CardContent>
                     <CardActions>
                         <div className="flex-container">
-                            <div><img src={reminderIcon} alt="archiveIcon" /></div>
+                            <div><ReminderComponent id={this.state.id} label={this.state.label} 
+                            collaborator={this.state.collaborator} /></div>
                             <div><img src={collaboratorIcon} alt="archiveIcon" /></div>
                             <div><ColorComponent /></div>
                             <div><img src={addimageIcon} alt="archiveIcon" /></div>
                             <div><img src={archiveIcon} alt="archiveIcon" /></div>
-                            <div><MoreIconComponent/></div>
-                        </div>
+                            <div><MoreIconComponent id={this.state.id} label={this.state.label} 
+                            collaborator={this.state.collaborator} /></div>                        </div>
                         <div id="closeBtnNote" onClick={this.handleClose} >
                             Close
                         </div>

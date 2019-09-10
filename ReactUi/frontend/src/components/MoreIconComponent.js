@@ -8,19 +8,34 @@ export default class MoreIconComponent extends Component {
         super();
         this.state={
             menuOpen:false,
-            anchoerEl:null
+            anchorEl:null
         }
+    }
+
+    handleMenu=(e)=>{
+        this.setState({
+            menuOpen:true,
+            anchorEl:e.target
+        })
+    }
+    handleClose = e =>{
+        this.setState({
+            menuOpen: !this.state.menuOpen,
+            anchorEl: this.state.anchorEl
+        })
     }
     render() {
         return (
             <div>
-                <img src={moreIcon} alt="moreIcon" />
+                <img  onClick={this.handleMenu} aria-controls="Moremenu"src={moreIcon} alt="moreIcon" />
 
                 <Menu
-                id="menu"
+                id="Moremenu"
+                onClose={this.handleClose}
+                anchorEl={this.state.anchorEl}
                 open={this.state.menuOpen}>
-                    <MenuItem>Delete Note</MenuItem>
-                    <MenuItem>Add label</MenuItem>
+                    <MenuItem id="MenuItem" >Delete Note</MenuItem>
+                    <MenuItem id="MenuItem">Add label</MenuItem>
                 </Menu>
             </div>
         )
