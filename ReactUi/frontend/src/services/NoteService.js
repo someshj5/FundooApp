@@ -11,8 +11,8 @@ class NoteService{
         return axios.post("http://localhost:8000/notes/notes/", data)
     }
 
-    getANote(data,id){
-        return axios.get("http://localhost:8000/notes/notes/"+id+"/", data)
+    getANote(id){
+        return axios.get("http://localhost:8000/notes/notes/"+id+"/")
     }
 
 

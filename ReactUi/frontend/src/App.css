@@ -60,6 +60,7 @@
   font-family:'Product Sans',Arial,sans-serif;
   font-size:22px;
   color:#5f6368;
+  cursor: pointer;
   
 }
 
@@ -335,4 +336,10 @@ cursor: pointer;
   font-size: 80%;
   font-weight: 600
 
+}
+
+.ReminderMenu{
+  font-size: 15px;
+  margin-left: 15px;
+  font-weight: bold;  
 }

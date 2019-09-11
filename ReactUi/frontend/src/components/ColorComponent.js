@@ -55,26 +55,33 @@ export default class ColorComponent extends Component {
     }
 
     changeColor = event =>{
-        this.props.changeColor(event.target.id)
-        console.log("update color",event.currentTarget.id)
+
+        if(this.state.id){
+            this.props.changeColor(event.target.id)
+            console.log("update color",event.currentTarget.id)
+            let UpdateData ={
+                "color": event.target.id,
+                "label":this.state.label,
+                "collaborator": this.state.collaborator
+            }
     
-        let UpdateData ={
-            "color": event.target.id,
-            "label":this.state.label,
-            "collaborator": this.state.collaborator
+            UpdateFunc(UpdateData, this.state.id)
+            .then(res=>{
+                this.props.noteGetFunc()
+                this.setState({DialogOpen:false})
+    
+                console.log(" after update", res);
+    
+            })
+            .catch(error=>{
+                console.log("error data", error)
+            })
         }
-
-        UpdateFunc(UpdateData, this.state.id)
-        .then(res=>{
-            this.props.noteGetFunc()
-            this.setState({DialogOpen:false})
-
-            console.log(" after update", res);
-
-        })
-        .catch(error=>{
-            console.log("error data", error)
-        })
+        else{
+            this.props.ColorAddNote(event.target.id)
+        }
+    
+       
     }
 
     render() {

@@ -1,14 +1,25 @@
 import React, { Component } from 'react'
 import moreIcon from '../svg_icons/more.svg'
 import { Menu, MenuItem } from '@material-ui/core';
+import NoteService from '../services/NoteService';
+
+
+
+const TrashAnote = new NoteService().updateANote
 
 
 export default class MoreIconComponent extends Component {
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state={
+            id : props.id,
+            label: props.label,
+            collaborator: props.collaborator,
             menuOpen:false,
-            anchorEl:null
+            anchorEl:null,
+            is_Trash:false ,
+
+
         }
     }
 
@@ -18,12 +29,40 @@ export default class MoreIconComponent extends Component {
             anchorEl:e.target
         })
     }
+
     handleClose = e =>{
         this.setState({
             menuOpen: !this.state.menuOpen,
             anchorEl: this.state.anchorEl
         })
     }
+
+
+
+    TrashNote=()=>{
+        this.setState({
+            is_Trash: true
+        })
+
+        let UpdateData ={
+            "is_Trash":true,
+            "label": this.state.label,
+            "collaborator": this.state.collaborator
+        }
+        TrashAnote(UpdateData, this.state.id)
+
+        .then(res=>{
+            console.log("is_trash update", res)
+            this.props.noteGetFunc()
+        })
+        .catch(error=>{
+            console.log("error in is_trash", error)
+        })
+    
+
+        
+    }
+
     render() {
         return (
             <div>
@@ -34,8 +73,8 @@ export default class MoreIconComponent extends Component {
                 onClose={this.handleClose}
                 anchorEl={this.state.anchorEl}
                 open={this.state.menuOpen}>
-                    <MenuItem id="MenuItem" >Delete Note</MenuItem>
-                    <MenuItem id="MenuItem">Add label</MenuItem>
+                    <MenuItem id="MenuItem" ><p onClick={this.TrashNote}>Delete Note</p></MenuItem>
+                    <MenuItem id="MenuItem"><p>Add label</p></MenuItem>
                 </Menu>
             </div>
         )

@@ -12,8 +12,8 @@ import ReminderComponent from './ReminderComponent';
 var createNote = new NoteService().createNote
 
 export default class AddNoteComponent extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             title:"",
             text: "",
@@ -21,9 +21,9 @@ export default class AddNoteComponent extends Component {
             is_archive: false,
             is_Trash: false,
             is_pinned: false,
-            reminder: null,
+            reminder:props.reminder,
             url: null,
-            color: null,
+            color: props.color,
             label: [],
             collaborator: [],
             displayAddNote: false,
@@ -76,7 +76,7 @@ export default class AddNoteComponent extends Component {
                         is_pinned: false,
                         reminder: null,
                         url: null,
-                        color: null,
+                        color: "#fff",
                         label: [],
                         collaborator: [],})
                     console.log("note detail", res.data)
@@ -94,6 +94,21 @@ export default class AddNoteComponent extends Component {
     addNoteToggle = e => {
         this.setState({ displayAddNote: !this.state.displayAddNote })
         console.log("========>", this.state)
+    }
+
+
+    reminderAddNote=(data)=>{
+        this.setState({
+            reminder:data,
+        })
+        console.log(this.state.reminder)
+    }
+
+    ColorAddNote=(data)=>{
+        this.setState({
+            color:data,
+        })
+        console.log(this.state.color)
     }
 
     render() {
@@ -120,7 +135,7 @@ export default class AddNoteComponent extends Component {
 {/* ---------------------------------------------------------------------------------- */}
                 <Card
                 className="AddnoteCard2"
-                style={{display: displaybig}}>
+                style={{display: displaybig, background:this.state.color}}>
                     <CardContent>
                         <InputBase
 
@@ -141,9 +156,13 @@ export default class AddNoteComponent extends Component {
                     <CardActions>
                         <div className="flex-container">
                             <div><ReminderComponent id={this.state.id} label={this.state.label} 
-                            collaborator={this.state.collaborator} /></div>
+                            collaborator={this.state.collaborator} reminderAddNote={this.reminderAddNote}/></div>
                             <div><img src={collaboratorIcon} alt="archiveIcon" /></div>
-                            <div><ColorComponent /></div>
+                            <div><ColorComponent  noteGetFunc={this.props.noteGetFunc} id={this.state.id} 
+                            label={this.state.label}
+                            ColorAddNote={this.ColorAddNote} 
+                            collaborator={this.state.collaborator}
+                            changeColor={this.changeColor} /></div>
                             <div><img src={addimageIcon} alt="archiveIcon" /></div>
                             <div><img src={archiveIcon} alt="archiveIcon" /></div>
                             <div><MoreIconComponent id={this.state.id} label={this.state.label} 
