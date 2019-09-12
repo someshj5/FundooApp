@@ -7,6 +7,8 @@ import SearchIcon from '@material-ui/icons/Search'
 import InputBase from '@material-ui/core/InputBase'
 import '../App.css'
 import keep_icon from '../svg_icons/keep_icon.png'
+// import listView from '../svg_icons/listview.svg'
+
 import LeftDrawer from './LeftDrawer'
 import Redirect from 'react-router-dom/Redirect'
 // import GetAllNotesComponent from './GetAllNotesComponent';
@@ -18,6 +20,10 @@ import NoteService from '../services/NoteService';
 
 
 const get_NotesAll = new NoteService().getNotesAll
+const getArchiveNotes = new NoteService().getArchives
+const getTrashNotes = new NoteService().getTrash
+
+
 
 
 export class DashboardComponent extends Component {
@@ -28,13 +34,15 @@ export class DashboardComponent extends Component {
             anchorEl: null,
             menuOpen: false,
             redirect:false,
-            notes:[]
+            notes:[],
+
         }
         this.leftDfun = this.leftDfun.bind(this)
     }
 
     componentDidMount(){
         this.noteGetFunc();
+
         if (sessionStorage.getItem('userdata')){
             console.log("call user feed")
         }
@@ -56,7 +64,6 @@ export class DashboardComponent extends Component {
 
 
     noteGetFunc = e =>{
-
     get_NotesAll()
     .then(res =>{
         this.setState({
@@ -69,6 +76,39 @@ export class DashboardComponent extends Component {
         
     })
     }
+
+
+
+    ArchiveGet=()=>{
+        this.setState({notes:[]})
+        console.log("notes",this.state.notes);
+        
+        getArchiveNotes()
+        .then(res=>{
+            this.setState({notes:res.data})
+        })
+        .catch(error=>{
+            console.log("error archive ", error.response)
+        })
+    }
+
+    TrashGet=()=>{
+        this.setState({notes:[]})
+        getTrashNotes()
+        .then(res=>{
+            this.setState({notes:res.data})
+        })
+        .catch(error=>{
+            console.log("error trash ", error.response)
+        })
+    }
+
+    // ReminderGet=()=>{
+    //     if (reminder != null){
+
+    //     }
+    // }
+
 
     render() {
 
@@ -104,15 +144,16 @@ export class DashboardComponent extends Component {
                                 <SearchIcon />
                             </div>
 
+                           
                         </div>
                         
                         <MenuComponent signOut={this.signOut} />
-
                     </Toolbar>
+                   
                 </AppBar>
-                <LeftDrawer open={this.state.open} />
+                <LeftDrawer noteGetFunc={this.noteGetFunc} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} open={this.state.open} ClickSec={this.ClickSec}/>
                 <AddNoteComponent noteGetFunc={this.noteGetFunc} />
-                <NoteSection  noteGetFunc={this.noteGetFunc} note={this.state.notes}/>
+                <NoteSection  TrashGet={this.TrashGet}  ArchiveGet={this.ArchiveGet} noteGetFunc={this.noteGetFunc} note={this.state.notes}/>
 
             </div>
         )           

@@ -7,6 +7,7 @@ import labeledt from '../svg_icons/label_edit.svg'
 import reminder from '../svg_icons/reminder_menu.svg'
 import archive from '../svg_icons/archive_menu.svg'
 import trash from '../svg_icons/trash.svg'
+import "../App.css"
 
 
 
@@ -22,7 +23,24 @@ const myDrawerTheme = createMuiTheme({
     }
 })
 
+
 export class LeftDrawer extends Component {
+
+
+
+
+    handleArchive=(event)=>{
+        this.props.ArchiveGet()
+    }
+
+    handleClick=(event)=>{
+        this.props.TrashGet()
+    }
+
+    handleNotes=(event)=>{
+        this.props.noteGetFunc()
+    }
+
 
     render() {
         return (
@@ -35,12 +53,12 @@ export class LeftDrawer extends Component {
                     anchor="left"
                     variant="persistent"
                     >
-                    <div className = "DrawerNote">
+                    <div className = "DrawerNote" id="notes"  onClick={this.handleNotes}>
                         <img src={note} alt="notesvg"/>
                         <p>Notes</p>
                     </div >
 
-                    <div className = "DrawerNote" >
+                    <div className = "DrawerNote" id="reminders" onClick={this.handleReminder}>
                         <img src={reminder} alt="remindersvg"/>
                         <p >Reminders</p>
                     </div>
@@ -58,7 +76,7 @@ export class LeftDrawer extends Component {
 
                     <Divider />
 
-                    <div className="DrawerNote">
+                    <div className="DrawerNote" id ="archives"  onClick={this.handleArchive} >
                     <img src={archive} alt="labelsvg"/>
 
                         <p>Archive</p>
@@ -66,7 +84,7 @@ export class LeftDrawer extends Component {
 
                     <Divider />
                     
-                    <div className="DrawerNote">
+                    <div className="DrawerNote" id ="trash"  onClick={this.handleClick}>
                     <img src={trash} alt="labelsvg"/>
 
                         <p>Trash</p>

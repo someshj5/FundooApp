@@ -214,6 +214,11 @@ cursor: pointer;
 
 }
 
+/* .DrawerNote:hover{
+  background-color: yellow;
+  height: 2em;
+} */
+
 .labelhead{
   font-size:10px ;
   font-weight:850; 
@@ -342,4 +347,10 @@ cursor: pointer;
   font-size: 15px;
   margin-left: 15px;
   font-weight: bold;  
+}
+
+
+
+.listView2{
+  margin-left: 200px;
 }

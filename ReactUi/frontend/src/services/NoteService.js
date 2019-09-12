@@ -24,6 +24,18 @@ class NoteService{
         return axios.put("http://localhost:8000/notes/notes/"+id+"/",data)
     }
 
+    getArchives(){
+        return axios.get("http://localhost:8000/notes/archive/")
+    }
+
+    getTrash(){
+        return axios.get("http://localhost:8000/notes/trash/")
+    }
+
+    getReminders(){
+        return axios.get("http://localhost:8000/notes/reminder/")
+    }
+
 }
 
 export default NoteService;

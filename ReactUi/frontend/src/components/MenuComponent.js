@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Menu, MenuItem, Avatar } from '@material-ui/core';
 import nature from '../nature.jpeg'
+// import listView from '../svg_icons/listview.svg'
 
 
 export default class MenuComponent extends Component {
@@ -35,6 +36,7 @@ export default class MenuComponent extends Component {
     render() {
         return (
             <div>
+              
                 <div className='desktopPic'>
                             <Avatar src={nature}
                                 aria-label="account of current user"

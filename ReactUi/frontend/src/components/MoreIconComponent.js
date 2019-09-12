@@ -16,6 +16,8 @@ export default class MoreIconComponent extends Component {
             label: props.label,
             collaborator: props.collaborator,
             menuOpen:false,
+            labelMenu:false,
+
             anchorEl:null,
             is_Trash:false ,
 
@@ -59,8 +61,16 @@ export default class MoreIconComponent extends Component {
             console.log("error in is_trash", error)
         })
     
-
         
+    }
+
+    AddlabelMenu=(e)=>{
+        this.setState({
+            labelMenu:true,
+            anchorEl:e.target
+            
+        })
+    
     }
 
     render() {
@@ -74,7 +84,16 @@ export default class MoreIconComponent extends Component {
                 anchorEl={this.state.anchorEl}
                 open={this.state.menuOpen}>
                     <MenuItem id="MenuItem" ><p onClick={this.TrashNote}>Delete Note</p></MenuItem>
-                    <MenuItem id="MenuItem"><p>Add label</p></MenuItem>
+                    <MenuItem id="MenuItem">
+
+                        <p onClick={this.AddlabelMenu}>
+                           
+
+                    
+
+                        Add label
+                        </p>
+                    </MenuItem>
                 </Menu>
             </div>
         )
