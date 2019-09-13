@@ -118,9 +118,9 @@ export default class NoteItem extends Component {
     render() {
         let reminderChip = this.state.reminder
 
-        if (reminderChip != null) { 
+        if (reminderChip != null) {
             reminderChip = <Chip
-            // avatar={<Avatar src={clockIcon} alt="Clockicon"/>}
+                // avatar={<Avatar src={clockIcon} alt="Clockicon"/>}
                 style={{ marginRight: 30 }}
                 label={this.state.reminder}
                 onDelete={this.DeleteReminder}
@@ -134,7 +134,7 @@ export default class NoteItem extends Component {
                     <CardContent onClick={this.handleDialogOpen}>
                         <p>{this.props.noteobj.title}</p>
                         <p>{this.props.noteobj.text}</p>
-                        <p >{reminderChip}</p>
+                        <p>{reminderChip}</p>
 
                     </CardContent>
                     <CardActions>
@@ -150,7 +150,7 @@ export default class NoteItem extends Component {
                             <div><img src={addimageIcon} alt="imageIcon" /></div>
                             <div><ArchiveComponent noteGetFunc={this.props.noteGetFunc} id={this.state.id}
                                 label={this.state.label} collaborator={this.state.collaborator} /></div>
-                            <div><MoreIconComponent  noteGetFunc={this.props.noteGetFunc} id={this.state.id} label={this.state.label}
+                            <div><MoreIconComponent labels={this.props.labels} noteGetFunc={this.props.noteGetFunc} id={this.state.id} label={this.state.label}
                                 collaborator={this.state.collaborator} /></div>
                         </div>
                     </CardActions>
@@ -191,21 +191,21 @@ export default class NoteItem extends Component {
                         />
                     </DialogContent>
                     {/* <DialogActions> */}
-                        <div className="flex-containerDialog">
-                            <div><ReminderComponent noteGetFunc={this.props.noteGetFunc} id={this.state.id}
-                                label={this.state.label}
-                                collaborator={this.state.collaborator} /></div>
-                            <div><img src={collaboratorIcon} alt="archiveIcon" /></div>
-                            <div><ColorComponent noteGetFunc={this.props.noteGetFunc} id={this.state.id}
-                                changeColor={this.changeColor} /></div>
-                            <div><img src={addimageIcon} alt="archiveIcon" /></div>
-                            <div><ArchiveComponent noteGetFunc={this.props.noteGetFunc} id={this.state.id}
-                                label={this.state.label} collaborator={this.state.collaborator} /></div>
-                            <div><MoreIconComponent id={this.state.id} label={this.state.label}
-                                collaborator={this.state.collaborator} /></div>
-                            <div id="closeBtnNote" onClick={this.UpdateSerFunc}>Close</div>
+                    <div className="flex-containerDialog">
+                        <div><ReminderComponent noteGetFunc={this.props.noteGetFunc} id={this.state.id}
+                            label={this.state.label}
+                            collaborator={this.state.collaborator} /></div>
+                        <div><img src={collaboratorIcon} alt="archiveIcon" /></div>
+                        <div><ColorComponent noteGetFunc={this.props.noteGetFunc} id={this.state.id}
+                            changeColor={this.changeColor} /></div>
+                        <div><img src={addimageIcon} alt="archiveIcon" /></div>
+                        <div><ArchiveComponent noteGetFunc={this.props.noteGetFunc} id={this.state.id}
+                            label={this.state.label} collaborator={this.state.collaborator} /></div>
+                        <div><MoreIconComponent  id={this.state.id} label={this.state.label}
+                            collaborator={this.state.collaborator} /></div>
+                        <div id="closeBtnNote" onClick={this.UpdateSerFunc}>Close</div>
 
-                        </div>
+                    </div>
                     {/* </DialogActions> */}
                 </Dialog>
 

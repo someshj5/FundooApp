@@ -7,7 +7,9 @@ import SearchIcon from '@material-ui/icons/Search'
 import InputBase from '@material-ui/core/InputBase'
 import '../App.css'
 import keep_icon from '../svg_icons/keep_icon.png'
-// import listView from '../svg_icons/listview.svg'
+import listView from '../svg_icons/listview.svg'
+import gridView from '../svg_icons/gridview.svg'
+
 
 import LeftDrawer from './LeftDrawer'
 import Redirect from 'react-router-dom/Redirect'
@@ -22,6 +24,7 @@ import NoteService from '../services/NoteService';
 const get_NotesAll = new NoteService().getNotesAll
 const getArchiveNotes = new NoteService().getArchives
 const getTrashNotes = new NoteService().getTrash
+const getReminderNotes = new NoteService().getReminders
 
 
 
@@ -31,10 +34,12 @@ export class DashboardComponent extends Component {
         super();
         this.state = {
             open: false,
+            list:false,
             anchorEl: null,
             menuOpen: false,
             redirect:false,
             notes:[],
+            labels:[],
 
         }
         this.leftDfun = this.leftDfun.bind(this)
@@ -78,7 +83,6 @@ export class DashboardComponent extends Component {
     }
 
 
-
     ArchiveGet=()=>{
         this.setState({notes:[]})
         console.log("notes",this.state.notes);
@@ -103,11 +107,24 @@ export class DashboardComponent extends Component {
         })
     }
 
-    // ReminderGet=()=>{
-    //     if (reminder != null){
+    ReminderGet=()=>{
+        this.setState({notes:[]})
+        getReminderNotes()
+        .then(res=>{
+            this.setState({notes:res.data})
+        })
+        .catch(error=>{
+            console.log("error reminderget ", error.response)
 
-    //     }
-    // }
+        })
+        
+    }
+
+    handleView=()=>{
+        this.setState({
+            list:!this.state.list
+        })
+    }
 
 
     render() {
@@ -115,6 +132,13 @@ export class DashboardComponent extends Component {
         if(this.state.redirect){
             return (<Redirect to={'/login'}/>)
         }
+
+        let viewIcon = listView
+
+        if (this.state.list){
+            viewIcon= gridView
+        }
+
 
         return (
             <div className='root' id="main">
@@ -137,6 +161,7 @@ export class DashboardComponent extends Component {
 
                         <div className='search'>
                             <InputBase
+                            style={{width:390}}
                                 className="InputBase"
                                 placeholder="Search" />
 
@@ -144,16 +169,17 @@ export class DashboardComponent extends Component {
                                 <SearchIcon />
                             </div>
 
-                           
                         </div>
-                        
-                        <MenuComponent signOut={this.signOut} />
+                        <div onClick={this.handleView} className="listviewIcon"><img src={viewIcon} alt="listicon"/></div>
+
+                        <div><MenuComponent signOut={this.signOut} /></div>
                     </Toolbar>
+
                    
                 </AppBar>
-                <LeftDrawer noteGetFunc={this.noteGetFunc} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} open={this.state.open} ClickSec={this.ClickSec}/>
+                <LeftDrawer ReminderGet={this.ReminderGet} noteGetFunc={this.noteGetFunc} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} open={this.state.open} ClickSec={this.ClickSec}/>
                 <AddNoteComponent noteGetFunc={this.noteGetFunc} />
-                <NoteSection  TrashGet={this.TrashGet}  ArchiveGet={this.ArchiveGet} noteGetFunc={this.noteGetFunc} note={this.state.notes}/>
+                <NoteSection ReminderGet={this.ReminderGet} TrashGet={this.TrashGet}  ArchiveGet={this.ArchiveGet} noteGetFunc={this.noteGetFunc} note={this.state.notes} labels={this.state.labels}/>
 
             </div>
         )           

@@ -36,6 +36,10 @@ class NoteService{
         return axios.get("http://localhost:8000/notes/reminder/")
     }
 
+    getLabels(){
+        return axios.get("http://localhost:8000/notes/label/")
+    }
+
 }
 
 export default NoteService;

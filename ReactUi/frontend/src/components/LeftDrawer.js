@@ -41,6 +41,12 @@ export class LeftDrawer extends Component {
         this.props.noteGetFunc()
     }
 
+    handleReminder=(events)=>{
+        this.props.ReminderGet()
+    }
+
+
+
 
     render() {
         return (
@@ -57,6 +63,8 @@ export class LeftDrawer extends Component {
                         <img src={note} alt="notesvg"/>
                         <p>Notes</p>
                     </div >
+                    <Divider />
+
 
                     <div className = "DrawerNote" id="reminders" onClick={this.handleReminder}>
                         <img src={reminder} alt="remindersvg"/>
