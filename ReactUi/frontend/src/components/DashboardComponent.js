@@ -25,6 +25,8 @@ const get_NotesAll = new NoteService().getNotesAll
 const getArchiveNotes = new NoteService().getArchives
 const getTrashNotes = new NoteService().getTrash
 const getReminderNotes = new NoteService().getReminders
+const DrawerLabelGet  = new NoteService().getLabels
+
 
 
 
@@ -47,6 +49,7 @@ export class DashboardComponent extends Component {
 
     componentDidMount(){
         this.noteGetFunc();
+        // this.DrawerLabels()
 
         if (sessionStorage.getItem('userdata')){
             console.log("call user feed")
@@ -80,6 +83,19 @@ export class DashboardComponent extends Component {
         console.log("error data", error.response.data)
         
     })
+    }
+
+    DrawerLabels=()=>{
+        DrawerLabelGet()
+        .then(res=>{
+            this.setState({
+                labels:res.data
+            })
+
+        })
+        .catch(error=>{
+            console.log("label error", error.response.data)
+        })
     }
 
 
@@ -177,9 +193,9 @@ export class DashboardComponent extends Component {
 
                    
                 </AppBar>
-                <LeftDrawer ReminderGet={this.ReminderGet} noteGetFunc={this.noteGetFunc} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} open={this.state.open} ClickSec={this.ClickSec}/>
+                <LeftDrawer labels={this.state.labels} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} noteGetFunc={this.noteGetFunc} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} open={this.state.open} ClickSec={this.ClickSec}/>
                 <AddNoteComponent noteGetFunc={this.noteGetFunc} />
-                <NoteSection ReminderGet={this.ReminderGet} TrashGet={this.TrashGet}  ArchiveGet={this.ArchiveGet} noteGetFunc={this.noteGetFunc} note={this.state.notes} labels={this.state.labels}/>
+                <NoteSection DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} TrashGet={this.TrashGet}  ArchiveGet={this.ArchiveGet} noteGetFunc={this.noteGetFunc} note={this.state.notes} labels={this.state.labels}/>
 
             </div>
         )           

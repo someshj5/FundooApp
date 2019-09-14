@@ -1,12 +1,15 @@
 import React, { Component } from 'react'
 import moreIcon from '../svg_icons/more.svg'
-import { Menu, MenuItem, InputBase } from '@material-ui/core';
+import { Menu, MenuItem, InputBase, Checkbox } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
 import NoteService from '../services/NoteService';
 
 
 
 const TrashAnote = new NoteService().updateANote
 const GetLabel = new NoteService().getLabels
+const LabelCreate = new NoteService().createLabel
+
 
 
 export default class MoreIconComponent extends Component {
@@ -98,9 +101,31 @@ export default class MoreIconComponent extends Component {
             .catch(error => {
                 console.log("error labelsget", error.response.data)
             })
-
-
     }
+
+    handleOnchange=(event)=>{
+        this.setState({
+            [event.target.name] :event.target.value
+        })
+        console.log("===>", this.state)
+    }
+
+    CreateLabel=()=>{
+        let Labeldata={
+            "name": this.state.label,
+            "user":sessionStorage.getItem("userid")
+        }
+        LabelCreate(Labeldata)
+        .then(res=>{
+            
+            this.LabelsGet()
+            console.log("Label created", res.data)
+        })
+        .catch(error=>{
+            console.log("error label", error.response.data)
+        })
+    }
+
 
 
 
@@ -114,7 +139,14 @@ export default class MoreIconComponent extends Component {
 
 
         const labelMap = this.state.labels.map((label) => {
-            return <MenuItem key={label.id} >{label.name}</MenuItem>
+            return <MenuItem  key={label.id} >
+            <Checkbox
+                        
+            onChange={this.handleLabel}
+            color="default"
+            />
+            {label.name}
+            </MenuItem>
 
         })
 
@@ -138,12 +170,23 @@ export default class MoreIconComponent extends Component {
                     </div>
 
 
-                    <div style={{ display: MenuLabelS }} className="labelsMenuItem">
-                        <InputBase/>
+                    <div style={{ display: MenuLabelS , height:200}} className="labelsMenuItem">
+
+
+                        <div >
+                            <InputBase
+                            name="label"
+                            onChange={this.handleOnchange}
+                                style={{ width: "75%" }}
+                                placeholder="Enter label name"
+                                className="LabelInputBase"
+                            />
+                            <span className="labelAddIcon"><AddIcon onClick={this.CreateLabel}/></span>
+                        </div>
                         {labelMap}
                     </div>
                 </Menu>
             </div>
         )
     }
-}
+} 

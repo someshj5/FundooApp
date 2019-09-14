@@ -375,5 +375,48 @@ cursor: pointer;
 
 .labelsMenuItem{
   font-size: 25px;
-  width: 99px;
+  width: 199px;
+
+}
+
+.LabelInputBase{
+  /* margin-bottom: 3px; */
+  margin-left: 10px;
+
+}
+
+.labelAddIcon{
+  margin-left:13px;
+}
+
+
+.DialogNote{
+  display: flex;
+  /* margin-top:13px;
+  margin-bottom :18px; */
+  width: 210px;
+  height: 55px;
+  align-items: flex;
+  font-family: 'Product Sans',Arial,sans-serif;
+  color:rgb(88, 86, 86);
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.DialogNote p {
+  margin-top: 19px;
+  margin-left:25px;
+  cursor: pointer;
+  
+  }
+
+.DgEditLabel{
+  display:flex;
+  /* flex-wrap: nowrap; */
+  flex-direction: column; 
+  /* align-content: flex-end; */
+  margin-left:90px;
+
+
 }

@@ -39,6 +39,10 @@ export default class NoteItem extends Component {
         }
     }
 
+   
+
+
+
     reminderChange = (data) => {
         this.setState({
             reminder: data,

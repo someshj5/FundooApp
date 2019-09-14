@@ -40,6 +40,10 @@ class NoteService{
         return axios.get("http://localhost:8000/notes/label/")
     }
 
+    createLabel(data){
+        return axios.post("http://localhost:8000/notes/label/", data)
+    }
+
 }
 
 export default NoteService;
