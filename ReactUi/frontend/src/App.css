@@ -260,13 +260,28 @@ cursor: pointer;
 }
 
 
+
 /*---------------------- Icon ----------------------------- */
 .flex-container {
+  /* opacity: 0; */
   position: relative;
   display: flex;
   flex-wrap: nowrap;
   /* background-color: DodgerBlue; */
 }
+
+
+/* .flex-container:hover {
+  opacity: 1;
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  /* background-color: DodgerBlue; */
+/* }  */
+
+
+
+
 
 .flex-container > div {
   /* background-color: #f1f1f1; */
@@ -367,7 +382,6 @@ cursor: pointer;
 }
 
 
-
 .listView2{
   margin-left: 200px;
 }
@@ -394,29 +408,43 @@ cursor: pointer;
   display: flex;
   /* margin-top:13px;
   margin-bottom :18px; */
-  width: 210px;
+  width: 190px;
   height: 55px;
-  align-items: flex;
+  /* align-items: flex; */
   font-family: 'Product Sans',Arial,sans-serif;
   color:rgb(88, 86, 86);
   font-size: 15px;
   font-weight: 900;
   cursor: pointer;
+  justify-content: space-between;
 }
+
 
 .DialogNote p {
   margin-top: 19px;
   margin-left:25px;
   cursor: pointer;
-  
+
   }
+
+
 
 .DgEditLabel{
   display:flex;
-  /* flex-wrap: nowrap; */
-  flex-direction: column; 
-  /* align-content: flex-end; */
-  margin-left:90px;
+  justify-content: center;
+}
 
+
+.DoneBtn{
+  font-family: 'Product Sans',Arial,sans-serif;
+  margin-right: 20px;
+  margin-top: 10px;
+  cursor: pointer;
 
 }
+  /* flex-wrap: nowrap; */
+  /* flex-direction: column; 
+  align-content: flex-start ;
+  /* margin-left:90px; */
+
+

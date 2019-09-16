@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Drawer, Divider, Dialog, DialogContent, DialogTitle, InputBase } from '@material-ui/core'
+import { Drawer, Divider, Dialog, DialogContent, DialogTitle, InputBase, DialogActions } from '@material-ui/core'
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles'
 import note from '../svg_icons/note.svg'
@@ -47,11 +47,7 @@ export class LeftDrawer extends Component {
         this.setState({
             labels:this.props.labels
         })
-        
-
     }
-
-
 
 
     handleArchive=(event)=>{
@@ -113,17 +109,31 @@ export class LeftDrawer extends Component {
         })
     }
 
+    handleLblEdit=()=>{
+
+
+    }
+
+
+    handleDialogClose=()=>{
+        this.setState({
+            Dopen:false
+        })
+    }
+
 
 
     render() {
 
+        
+
         const DrawerLabel = this.state.labels.map((label)=>{
-            return <div  className = "DrawerNote" key={label.id}><img src={labelIcon} alt="labelsvg"/><p>{label.name}</p></div>
+            return <div style={{display:"labelTitle"}} className = "DrawerNote" key={label.id}><img src={labelIcon} alt="labelsvg"/><p>{label.name}</p></div>
 
         })
 
         const DialogLabel = this.state.labels.map((label)=>{
-            return <div className = "DialogNote" key={label.id}><img src={labelIcon} alt="labelsvg"/><p>{label.name}</p><div className="DgEditLabel" ><img  src={labeledt} alt="labelsvg"/></div></div>
+            return <div className = "DialogNote" key={label.id}><img src={labelIcon} alt="labelsvg"/><p>{label.name}</p><div className="DgEditLabel" ><img onClick={this.handleLblEdit}  src={labeledt} alt="labelsvg"/></div></div>
         })
 
 
@@ -191,7 +201,7 @@ export class LeftDrawer extends Component {
                 PaperProps={{
                     style: {
                         background: this.state.color,
-                        width: "20%",
+                        width: "22%",
                         height: "auto"
                     }
                 }}>
@@ -208,8 +218,14 @@ export class LeftDrawer extends Component {
                     </DialogTitle>
                     <DialogContent>
                         
+                        
                     {DialogLabel}
                     </DialogContent>
+                    <DialogActions>
+                    <div className="DoneBtn" onClick={this.handleDialogClose} >
+                    Done
+                    </div>
+                    </DialogActions>
 
                  </Dialog>
             </div>

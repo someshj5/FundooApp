@@ -158,8 +158,8 @@ export default class NoteItem extends Component {
                                 collaborator={this.state.collaborator} /></div>
                         </div>
                     </CardActions>
-
                 </Card>
+
 
                 {/* --------------------------------------------------------------------------------------------------- */}
                 <Dialog
