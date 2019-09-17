@@ -66,7 +66,7 @@ export default class AddNoteComponent extends Component {
             else{
                 createNote(noteData)
                 .then(res=>{
-                    this.props.noteGetFunc()
+                    
                     this.setState({ 
                         title:"",
                         text: "",
@@ -79,6 +79,7 @@ export default class AddNoteComponent extends Component {
                         color: "#fff",
                         label: [],
                         collaborator: [],})
+                        this.props.noteGetFunc()
                     console.log("note detail", res.data)
     
                 })

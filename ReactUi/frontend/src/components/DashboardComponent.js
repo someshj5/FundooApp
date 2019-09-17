@@ -140,6 +140,13 @@ export class DashboardComponent extends Component {
         this.setState({
             list:!this.state.list
         })
+
+    }
+
+    handleNoteid(data){
+        this.setState({
+            id: data
+        })
     }
 
 
@@ -195,7 +202,7 @@ export class DashboardComponent extends Component {
                 </AppBar>
                 <LeftDrawer labels={this.state.labels} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} noteGetFunc={this.noteGetFunc} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} open={this.state.open} ClickSec={this.ClickSec}/>
                 <AddNoteComponent noteGetFunc={this.noteGetFunc} />
-                <NoteSection DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} TrashGet={this.TrashGet}  ArchiveGet={this.ArchiveGet} noteGetFunc={this.noteGetFunc} note={this.state.notes} labels={this.state.labels}/>
+                <NoteSection layout={this.state.list} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} TrashGet={this.TrashGet}  ArchiveGet={this.ArchiveGet} noteGetFunc={this.noteGetFunc} note={this.state.notes} labels={this.state.labels}/>
 
             </div>
         )           

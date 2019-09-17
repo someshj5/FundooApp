@@ -40,6 +40,7 @@ export default class NoteItem extends Component {
     }
 
    
+ 
 
 
 
@@ -96,6 +97,8 @@ export default class NoteItem extends Component {
 
     }
 
+
+
     UpdateSerFunc = () => {
         let UpdateData = {
             "title": this.state.title,
@@ -119,7 +122,13 @@ export default class NoteItem extends Component {
     }
 
 
+
+
+
     render() {
+
+        const layout = this.props.layout ? "NoteCardList" : "NoteCard"
+
         let reminderChip = this.state.reminder
 
         if (reminderChip != null) {
@@ -133,8 +142,8 @@ export default class NoteItem extends Component {
 
         var noteCardShadow = "3px 5px 10px grey"
         return (
-            <div >
-                <Card className="NoteCard" style={{ background: this.state.color, boxShadow: noteCardShadow }}>
+            <div className="ParentCard" >
+                <Card className={layout} style={{ background: this.state.color, boxShadow: noteCardShadow }}>
                     <CardContent onClick={this.handleDialogOpen}>
                         <p>{this.props.noteobj.title}</p>
                         <p>{this.props.noteobj.text}</p>

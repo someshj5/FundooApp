@@ -1,47 +1,54 @@
 import axios from 'axios'
 
+
+const baseUrl = require("../config/key").baseUrl
+
 class NoteService{
 
     getNotesAll(){
-        return axios.get("http://localhost:8000/notes/notes/")
+        return axios.get(baseUrl+"notes/")
     }
 
     createNote(data){
 
-        return axios.post("http://localhost:8000/notes/notes/", data)
+        return axios.post(baseUrl+"notes/", data)
     }
 
     getANote(id){
-        return axios.get("http://localhost:8000/notes/notes/"+id+"/")
+        return axios.get(baseUrl+"notes/"+id+"/")
     }
 
 
     delANote(data,id){
-        return axios.delete("http://localhost:8000/notes/notes/"+id+"/", data)
+        return axios.delete(baseUrl+"notes/"+id+"/", data)
     }
 
     updateANote(data,id){
-        return axios.put("http://localhost:8000/notes/notes/"+id+"/",data)
+        return axios.put(baseUrl+"notes/"+id+"/",data)
     }
 
     getArchives(){
-        return axios.get("http://localhost:8000/notes/archive/")
+        return axios.get(baseUrl+"archive/")
     }
 
     getTrash(){
-        return axios.get("http://localhost:8000/notes/trash/")
+        return axios.get(baseUrl+"trash/")
     }
 
     getReminders(){
-        return axios.get("http://localhost:8000/notes/reminder/")
+        return axios.get(baseUrl+"reminder/")
     }
 
     getLabels(){
-        return axios.get("http://localhost:8000/notes/label/")
+        return axios.get(baseUrl+"label/")
     }
 
     createLabel(data){
-        return axios.post("http://localhost:8000/notes/label/", data)
+        return axios.post(baseUrl+"label/", data)
+    }
+
+    deleteLabel(id){
+        return axios.delete(baseUrl+"label/"+id+"/")
     }
 
 }

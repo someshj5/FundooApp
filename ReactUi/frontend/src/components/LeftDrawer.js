@@ -4,6 +4,7 @@ import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles'
 import note from '../svg_icons/note.svg'
 import labeledt from '../svg_icons/label_edit.svg'
+
 import reminder from '../svg_icons/reminder_menu.svg'
 import archive from '../svg_icons/archive_menu.svg'
 import labelIcon from '../svg_icons/label.svg'
@@ -12,10 +13,13 @@ import AddIcon from '@material-ui/icons/Add';
 import trash from '../svg_icons/trash.svg'
 import "../App.css"
 import NoteService from '../services/NoteService';
+import DialogLabelEdit from './DialogLabelEdit';
 
 
 const DrawerLabelGet = new NoteService().getLabels
 const LabelCreate = new NoteService().createLabel
+const GetLabel = new NoteService().getLabels
+
 
 
 
@@ -32,10 +36,13 @@ const myDrawerTheme = createMuiTheme({
 
 
 export class LeftDrawer extends Component {
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state={
-            
+            // labelId:props.label.id,
+            label:props.label,
+            isHover:false,
+            renameLabel:false,
             labels:[],
             Dopen:false
 
@@ -93,6 +100,29 @@ export class LeftDrawer extends Component {
     }
 
 
+    LabelsGet = () => {
+        GetLabel()
+            .then(res => {
+                this.setState({
+                    labels: res.data
+                })
+                console.log("labels", res.data)
+            })
+
+            .catch(error => {
+                console.log("error labelsget", error.response.data)
+            })
+    }
+
+
+    handleOnChange=(event)=>{
+        this.setState({
+            [event.target.name] :event.target.value
+        })
+        console.log("===>", this.state.label)
+    }
+
+
     CreateLabel=()=>{
         let Labeldata={
             "name": this.state.label,
@@ -103,16 +133,15 @@ export class LeftDrawer extends Component {
             
             this.LabelsGet()
             console.log("Label created", res.data)
+
         })
+
         .catch(error=>{
             console.log("error label", error.response.data)
         })
     }
 
-    handleLblEdit=()=>{
 
-
-    }
 
 
     handleDialogClose=()=>{
@@ -122,18 +151,36 @@ export class LeftDrawer extends Component {
     }
 
 
+    handleMouse=()=>{
+        this.setState({
+            isHover:true
+        })
+    }
+
+    handleMouseLeave=()=>{
+        this.setState({
+            isHover:false
+        })
+    }
+
+
+
+
 
     render() {
 
         
 
         const DrawerLabel = this.state.labels.map((label)=>{
-            return <div style={{display:"labelTitle"}} className = "DrawerNote" key={label.id}><img src={labelIcon} alt="labelsvg"/><p>{label.name}</p></div>
+            return <div style={{display:"labelTitle"}} className = "DrawerNote" key={label.id}>
+                        <img src={labelIcon} alt="labelsvg"/>
+                        <p>{label.name}</p>
+                    </div>
 
         })
 
         const DialogLabel = this.state.labels.map((label)=>{
-            return <div className = "DialogNote" key={label.id}><img src={labelIcon} alt="labelsvg"/><p>{label.name}</p><div className="DgEditLabel" ><img onClick={this.handleLblEdit}  src={labeledt} alt="labelsvg"/></div></div>
+            return <DialogLabelEdit LabelsGet={this.LabelsGet} key={label.id} label={label}/>
         })
 
 
@@ -217,9 +264,9 @@ export class LeftDrawer extends Component {
                     </div>
                     </DialogTitle>
                     <DialogContent>
-                        
-                        
+                    
                     {DialogLabel}
+
                     </DialogContent>
                     <DialogActions>
                     <div className="DoneBtn" onClick={this.handleDialogClose} >
