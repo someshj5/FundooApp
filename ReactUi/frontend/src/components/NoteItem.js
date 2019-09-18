@@ -4,7 +4,6 @@ import {
     Divider, DialogTitle, Chip
 } from '@material-ui/core';
 import "../App.css"
-import collaboratorIcon from '../svg_icons/collaborator.svg'
 import addimageIcon from '../svg_icons/addimage.svg'
 // import clockIcon from '../svg_icons/iconfinder_9_3898370.svg'
 
@@ -13,6 +12,7 @@ import NoteService from '../services/NoteService'
 import ReminderComponent from './ReminderComponent';
 import MoreIconComponent from './MoreIconComponent';
 import ArchiveComponent from './ArchiveComponent';
+import CollaboratorComponent from './CollaboratorComponent';
 
 const UpdateFunc = new NoteService().updateANote
 
@@ -134,7 +134,7 @@ export default class NoteItem extends Component {
         if (reminderChip != null) {
             reminderChip = <Chip
                 // avatar={<Avatar src={clockIcon} alt="Clockicon"/>}
-                style={{ marginRight: 30 }}
+                // style={{ marginRight: 30 }}
                 label={this.state.reminder}
                 onDelete={this.DeleteReminder}
             />
@@ -155,7 +155,7 @@ export default class NoteItem extends Component {
                             <div><ReminderComponent noteGetFunc={this.props.noteGetFunc}
                                 id={this.state.id} label={this.state.label} reminderChange={this.reminderChange}
                                 collaborator={this.state.collaborator} /></div>
-                            <div><img src={collaboratorIcon} alt="collaboratorIcon" /></div>
+                            <div><CollaboratorComponent/></div>
                             <div><ColorComponent noteGetFunc={this.props.noteGetFunc} id={this.state.id}
                                 label={this.state.label}
                                 collaborator={this.state.collaborator}
@@ -208,7 +208,7 @@ export default class NoteItem extends Component {
                         <div><ReminderComponent noteGetFunc={this.props.noteGetFunc} id={this.state.id}
                             label={this.state.label}
                             collaborator={this.state.collaborator} /></div>
-                        <div><img src={collaboratorIcon} alt="archiveIcon" /></div>
+                        <div><CollaboratorComponent/></div>
                         <div><ColorComponent noteGetFunc={this.props.noteGetFunc} id={this.state.id}
                             changeColor={this.changeColor} /></div>
                         <div><img src={addimageIcon} alt="archiveIcon" /></div>

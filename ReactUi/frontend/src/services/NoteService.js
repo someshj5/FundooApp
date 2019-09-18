@@ -51,6 +51,10 @@ class NoteService{
         return axios.delete(baseUrl+"label/"+id+"/")
     }
 
+    editLabel(data,id){
+        return axios.put(baseUrl+"label/"+id+"/", data)
+    }
+
 }
 
 export default NoteService;

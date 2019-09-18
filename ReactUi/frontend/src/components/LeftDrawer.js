@@ -248,7 +248,7 @@ export class LeftDrawer extends Component {
                 PaperProps={{
                     style: {
                         background: this.state.color,
-                        width: "22%",
+                        width: "23%",
                         height: "auto"
                     }
                 }}>
