@@ -79,7 +79,11 @@ export default class DialogLabelEdit extends Component {
 
         LabelEdit(updateData,this.props.label.id)
         .then(res=>{
+            this.props.LabelsGet()
             console.log("after label renamed", res.data)
+            this.setState({
+                renameLabel:false
+            })
         })
 
         .catch(error=>{
