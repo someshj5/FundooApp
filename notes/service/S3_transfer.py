@@ -10,7 +10,7 @@ class S3Upload:
     The Class for S3 file uploading at S3 bucket
     """
     def __init__(self):
-        self.s3 = boto3.client('s3')
+        self.s3 = boto3.resource('s3')
 
     def transfer(self, image):
         """
@@ -20,9 +20,16 @@ class S3Upload:
         """
         try:
             imagename = image.name
-            self.s3.upload_fileobj(image, 'somesh-static', str(imagename))
+            s3 = boto3.client('s3')
+            print("inside transfer")
+            s3.upload_fileobj(image, 'somesh-static', str(imagename))
+            print("uploaded")
 
-            url = '{}.{}/{}'.format('somesh-static', self.s3.meta.endpoint_url,  imagename)
+            url = 'http: // {}.s3.{}.amazonaws.com / {}'.format('somesh-static', s3.meta.region_name,  imagename)
+
+            # https: // somesh - static.s3.ap - south - 1.amazonaws.com / nature2.jpeg
+
+            # https:// somesh-static.s3.ap-south-1.amazonaws.com/nature.jpeg
             print(url)
             return url
         except ValueError:

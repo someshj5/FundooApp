@@ -19,6 +19,8 @@ class NoteSerializers(serializers.ModelSerializer):
         """
         model = Notes
         fields = "__all__"
+        extra_kwargs = {'user': {'required': False}}
+
 
     def create(self, validated_data):
         return Notes.objects.create(**validated_data)
@@ -35,6 +37,6 @@ class NoteSerializers(serializers.ModelSerializer):
         instance.reminder = validated_data.get('reminder', instance.reminder)
         instance.url = validated_data.get('url', instance.url)
         instance.color = validated_data.get('color', instance.color)
-        instance.user = User.objects.get(id=validated_data.get('user', instance.user))
+        # instance.user = User.objects.get(id=validated_data.get('user', instance.user))
         instance.save()
         return instance

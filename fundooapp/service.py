@@ -6,16 +6,18 @@
 """
 import redis
 from django.core.cache.backends import db
-from fundooproject.settings import host, port
-
-
+from fundooproject.settings import redis_host, redis_port
+# try:
+#     r = redis.StrictRedis(host='localhost', port=6379, db=0)
+# except Exception as e:
+#     print(e)
 class Redis:
 
     """
     Class Redis with set get and flush methods
     """
     def __init__(self):
-        self.r = redis.StrictRedis(host=host, port=port, db=db)
+        self.r = redis.StrictRedis(host=redis_host, port=redis_port, db=0)
 
     def set(self, key, value):
         """
@@ -30,7 +32,9 @@ class Redis:
         :param key: Returns all keys matching pattern
         :return: returns the value of the specific key
         """
+        print("Auth redis")
         value = self.r.get(key)
+
         return value
 
     def flushall(self):

@@ -33,6 +33,7 @@ export default class NoteItem extends Component {
             reminder: props.noteobj.reminder,
             url: null,
             color: props.noteobj.color,
+            labeldata:props.noteobj.label,
             label: [],
             collaborator: [],
 
@@ -140,6 +141,30 @@ export default class NoteItem extends Component {
             />
         }
 
+        let DrawerLabelArray = []
+      
+        this.state.labeldata.map((labelobj)=>{
+            console.log("labelobj", labelobj)
+            console.log("Drawerlabels",  this.props.labelsArrayDash)
+            this.props.labelsArrayDash.map((Dlabel)=>{
+                console.log("Dlabel", Dlabel)
+                if(Dlabel.id === labelobj){
+                DrawerLabelArray.push(Dlabel)
+            }
+            return DrawerLabelArray
+            })
+            return DrawerLabelArray
+        })
+        
+
+        let LabelChip = DrawerLabelArray.map((DlabelArray)=>{
+            return <Chip
+                    style={{marginTop:5}}
+                    key={DlabelArray.id}
+                    label={DlabelArray.name}
+                    />
+        })
+
         var noteCardShadow = "3px 5px 10px grey"
         return (
             <div className="ParentCard" >
@@ -148,6 +173,7 @@ export default class NoteItem extends Component {
                         <p>{this.props.noteobj.title}</p>
                         <p>{this.props.noteobj.text}</p>
                         <p>{reminderChip}</p>
+                        <p>{LabelChip}</p>
 
                     </CardContent>
                     <CardActions>
@@ -155,7 +181,7 @@ export default class NoteItem extends Component {
                             <div><ReminderComponent noteGetFunc={this.props.noteGetFunc}
                                 id={this.state.id} label={this.state.label} reminderChange={this.reminderChange}
                                 collaborator={this.state.collaborator} /></div>
-                            <div><CollaboratorComponent/></div>
+                            <div><CollaboratorComponent id={this.state.id}/></div>
                             <div><ColorComponent noteGetFunc={this.props.noteGetFunc} id={this.state.id}
                                 label={this.state.label}
                                 collaborator={this.state.collaborator}
@@ -208,7 +234,7 @@ export default class NoteItem extends Component {
                         <div><ReminderComponent noteGetFunc={this.props.noteGetFunc} id={this.state.id}
                             label={this.state.label}
                             collaborator={this.state.collaborator} /></div>
-                        <div><CollaboratorComponent/></div>
+                        <div><CollaboratorComponent id={this.state.id}/></div>
                         <div><ColorComponent noteGetFunc={this.props.noteGetFunc} id={this.state.id}
                             changeColor={this.changeColor} /></div>
                         <div><img src={addimageIcon} alt="archiveIcon" /></div>

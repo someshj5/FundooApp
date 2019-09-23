@@ -16,12 +16,18 @@ from rest_framework.views import APIView
 
 from auth import requiredLogin
 import datetime
-from notes.models import Notes, ProfilePic
+
+from fundooapp.serializers import UserSerializers
+from notes.models import Notes
 from notes.serializers import NoteSerializers
+from notes.service import Utility
 from notes.service.S3_transfer import S3Upload
 from fundooapp.service import Redis
 from labels.models import Label
 from notes.NotesDocuments import NotesDocument
+from notes.service.Utility import Util
+from elasticsearch_dsl import Q
+
 redisCache = Redis()
 s3 = S3Upload
 logger = logging.getLogger(__name__)
@@ -46,7 +52,8 @@ def get_custom_response(success=False, message='something went wrong', data=[], 
 
 
 @csrf_exempt
-@method_decorator(requiredLogin)
+@requiredLogin
+@api_view(['POST'])
 def upload(request):
     """
     The method uploads the image files to the S3 bucket
@@ -59,12 +66,22 @@ def upload(request):
             if image:
                 if imghdr.what(image):
                     print('-------->')
+                    s3 = S3Upload
                     picture = s3.transfer(request, image)
-                    snap = ProfilePic(profile_pic=picture)
-                    snap.save()
-                    logger.info("file upload success")
-                    if picture:
-                        return HttpResponse('File uploaded to s3')
+                    print("s2 pic url returned", picture)
+                    snap = User(profile_pic=picture)
+                    userser = UserSerializers(snap)
+                    userser.is_valid(raise_exception=True)
+                    # userser.update(validated_data=snap)
+                    userser.validated_data(data=userser)
+                    if userser:
+                        obj = userser.save()
+                        obj.save()
+                        logger.info("file upload success")
+                        if picture:
+                            return HttpResponse('File uploaded to s3')
+                    else:
+                        raise UserSerializers.errors
                 else:
                     logger.warning("only image file allowed")
                     HttpResponse('File other than image are not allowed')
@@ -79,15 +96,18 @@ class NotesCreate(APIView):
     """
     This method creates notes for the application
     """
+
+    @requiredLogin
     def get(self, request):
         """
-
         :param request: request for data
         :return: returns the response
-
         """
         try:
-            noted = Notes.objects.all()
+            userdata = Util.Getuser()
+            uid = userdata['id']
+
+            noted = Notes.objects.filter(is_Trash=False, is_archive=False).order_by('-created_at')
             if noted:
                 notedata = NoteSerializers(noted, many=True)
                 obj = pickle.dumps(notedata.data)
@@ -100,6 +120,7 @@ class NotesCreate(APIView):
         except ValueError:
             return Response({'error': 'no such notes'}, status=404)
 
+    @requiredLogin
     def post(self, request):
         """
 
@@ -148,6 +169,7 @@ class NotesApi(APIView):
     This methods are for updating, deleting and getting the notes created.
     """
 
+    @requiredLogin
     def get(self, request, pk):
         """
         :param pk: the primary key of note
@@ -165,6 +187,7 @@ class NotesApi(APIView):
         except ValueError:
             return Response({'error': 'no such notes'}, status=404)
 
+    @requiredLogin
     def delete(self, request, pk):
         """
         :param pk: the primary key of note
@@ -183,6 +206,7 @@ class NotesApi(APIView):
         except ValueError:
             return Response({'error': 'no such notes'}, status=404)
 
+    @requiredLogin
     def put(self, request, pk):
         """
         :param pk: the primary key of note
@@ -216,6 +240,8 @@ class Trash(APIView):
     """
     This method is for trash notes visiblity
     """
+
+    @requiredLogin
     def get(self, request):
         """
         :param request: request for data
@@ -237,6 +263,8 @@ class Archived(APIView):
     """
     This method is for Archived notes
     """
+
+    @requiredLogin
     def get(self, request):
         """
         :param request: request for data
@@ -259,15 +287,18 @@ class Reminder(APIView):
     This method is for reminder for notes
 
     """
+
+    @requiredLogin
     def get(self, request):
         """
         :param request: request for data
         :return: returns the response
         """
         try:
-            reminder = Notes.objects.filter(reminder= datetime.date.today())
+            reminder = Notes.objects.exclude(reminder__isnull=True)
             notes = NoteSerializers(reminder, many=True)
             print(datetime.date)
+            # reminder = datetime.datetime.now() - datetime.timedelta(days=90)
 
             if notes:
                 return Response(notes.data, status=200)
@@ -279,27 +310,29 @@ class Reminder(APIView):
 
 
 @api_view(["GET"])
+@requiredLogin
 def search(request):
     """
     :param request: for the keyword to search
     :return: the json data response
     """
     try:
-        q = request.POST.get('q')
-        if q:
-            posts = NotesDocument.Search().query("match", title=q)
+        searchquery = request.GET.get('query')
+        if searchquery:
+            posts = NotesDocument.search().query(Q("match", title=searchquery) | Q("match", text=searchquery))
 
             jsondata = []
             data = {'data': posts}
-
+            ids = []
             for i in data['data']:
-                data1 = {}
-                data1['title'] = i.title
-                data1['text'] = i.text
-                data1['id'] = i.id
+                data1 = {'title': i.title, 'text': i.text, 'id': i.id}
+                ids.append(data1['id'])
                 jsondata.append(data1)
                 print(jsondata)
-            return Response(jsondata, status=200)
+
+            note = Notes.objects.filter(id__in=ids)
+            noteser = NoteSerializers(note, many=True)
+            return Response(noteser.data, status=200)
         else:
             logger.warning("no such note present in db")
             raise ValueError
@@ -308,6 +341,7 @@ def search(request):
 
 
 @api_view(['GET', 'POST'])
+@requiredLogin
 def collaborator_view(request, pk):
     """
     :param request: requesting user for id and email
@@ -339,13 +373,12 @@ def collaborator_view(request, pk):
         return Response({"error": "user does not exist"}, status=404)
 
 
-@api_view(['POST','GET'])
-def note_reminder(request,pk):
+@api_view(['POST', 'GET'])
+def note_reminder(request, pk):
     notes = Notes.objects.get(pk=pk)
     if request.method == 'POST':
         notes.reminder = datetime.date.today()
         notes.save()
-        return Response({"message":"reminder date added"}, status=200)
+        return Response({"message": "reminder date added"}, status=200)
     else:
         return Response(notes.data, status=200)
-

@@ -25,7 +25,8 @@ const get_NotesAll = new NoteService().getNotesAll
 const getArchiveNotes = new NoteService().getArchives
 const getTrashNotes = new NoteService().getTrash
 const getReminderNotes = new NoteService().getReminders
-const DrawerLabelGet  = new NoteService().getLabels
+const DrawerLabelGet = new NoteService().getLabels
+const SearchQuery = new NoteService().search
 
 
 
@@ -36,26 +37,30 @@ export class DashboardComponent extends Component {
         super();
         this.state = {
             open: false,
-            list:false,
+            list: false,
             anchorEl: null,
             menuOpen: false,
-            redirect:false,
-            notes:[],
-            labels:[],
+            redirect: false,
+            notes: [],
+            searchArray:[],
+            labels: [],
+            search: null,
+            is_search:false,
 
         }
         this.leftDfun = this.leftDfun.bind(this)
     }
 
-    componentDidMount(){
+    componentDidMount() {
+        this.DrawerLabels();
         this.noteGetFunc();
         // this.DrawerLabels()
 
-        if (sessionStorage.getItem('userdata')){
+        if (sessionStorage.getItem('userdata')) {
             console.log("call user feed")
         }
-        else{
-            this.setState({redirect:true})
+        else {
+            this.setState({ redirect: true })
         }
     }
 
@@ -65,101 +70,133 @@ export class DashboardComponent extends Component {
         })
     }
 
-    signOut=()=>{
-        this.setState({redirect:true})
+    signOut = () => {
+        this.setState({ redirect: true })
     }
 
 
 
-    noteGetFunc = e =>{
-    get_NotesAll()
-    .then(res =>{
-        this.setState({
-            notes:res.data.data
-        })
-    })
-
-    .catch(error =>{
-        console.log("error data", error.response.data)
-        
-    })
-    }
-
-    DrawerLabels=()=>{
-        DrawerLabelGet()
-        .then(res=>{
-            this.setState({
-                labels:res.data
+    noteGetFunc = e => {
+        get_NotesAll()
+            .then(res => {
+                this.setState({
+                    notes: res.data
+                })
             })
 
-        })
-        .catch(error=>{
-            console.log("label error", error.response.data)
-        })
+            .catch(error => {
+                console.log("error data", error.response)
+
+            })
+    }
+
+    DrawerLabels = () => {
+        DrawerLabelGet()
+            .then(res => {
+                this.setState({
+                    labels: res.data
+                })
+
+            })
+            .catch(error => {
+                console.log("label error", error.response.data)
+            })
     }
 
 
-    ArchiveGet=()=>{
-        this.setState({notes:[]})
-        console.log("notes",this.state.notes);
-        
+    ArchiveGet = () => {
+        this.setState({ notes: [] })
+        console.log("notes", this.state.notes);
+
         getArchiveNotes()
-        .then(res=>{
-            this.setState({notes:res.data})
-        })
-        .catch(error=>{
-            console.log("error archive ", error.response)
-        })
+            .then(res => {
+                this.setState({ notes: res.data })
+            })
+            .catch(error => {
+                console.log("error archive ", error.response)
+            })
     }
 
-    TrashGet=()=>{
-        this.setState({notes:[]})
+    TrashGet = () => {
+        this.setState({ notes: [] })
         getTrashNotes()
-        .then(res=>{
-            this.setState({notes:res.data})
-        })
-        .catch(error=>{
-            console.log("error trash ", error.response)
-        })
+            .then(res => {
+                this.setState({ notes: res.data })
+            })
+            .catch(error => {
+                console.log("error trash ", error.response)
+            })
     }
 
-    ReminderGet=()=>{
-        this.setState({notes:[]})
+    ReminderGet = () => {
+        this.setState({ notes: [] })
         getReminderNotes()
-        .then(res=>{
-            this.setState({notes:res.data})
-        })
-        .catch(error=>{
-            console.log("error reminderget ", error.response)
+            .then(res => {
+                this.setState({ notes: res.data })
+            })
+            .catch(error => {
+                console.log("error reminderget ", error.response)
 
-        })
-        
+            })
+
     }
 
-    handleView=()=>{
+    handleView = () => {
         this.setState({
-            list:!this.state.list
+            list: !this.state.list
         })
 
     }
 
-    handleNoteid(data){
+    handleNoteid(data) {
         this.setState({
             id: data
         })
     }
 
+    handleSearch = (event) => {
+        this.setState({
+            is_search:true,
+            search: event.target.value
+        })
+        console.log("searchinput", this.state.search)}
+
+    
+Search=()=>{
+    let query = this.state.search
+   
+    if(this.state.search === ""){
+        this.setState({ is_search: false })
+    }
+    else{
+        this.setState({ notes: [] })
+        SearchQuery(query)
+        .then(res=>{
+            this.setState({
+                notes : res.data.data
+            })
+            console.log("search results", this.state.notes)
+            
+        })
+    
+        .catch(error=>{
+            console.log("serach errors", error.response)
+        })
+       
+    }
+}
+
 
     render() {
 
-        if(this.state.redirect){
-            return (<Redirect to={'/login'}/>)
+        if (this.state.redirect) {
+            return (<Redirect to={'/login'} />)
         }
 
         let viewIcon = listView
 
-        if (this.state.list){
-            viewIcon= gridView
+        if (this.state.list) {
+            viewIcon = gridView
         }
 
 
@@ -167,10 +204,10 @@ export class DashboardComponent extends Component {
             <div className='root' id="main">
                 <AppBar position="fixed" color="default">
 
-                    <Toolbar className='ToolBar' >
+                    < Toolbar className='ToolBar' >
 
-                        <IconButton  onClick={this.leftDfun} edge="start" color="inherit" aria-label="menu" >
-                            <MenuIcon  />
+                        <IconButton onClick={this.leftDfun} edge="start" color="inherit" aria-label="menu" >
+                            <MenuIcon />
                         </IconButton>
 
                         <div className='imgFundoo'>
@@ -184,31 +221,32 @@ export class DashboardComponent extends Component {
 
                         <div className='search'>
                             <InputBase
-                            style={{width:390}}
+
+                                style={{ width: 390 }}
+                                id="search"
+                                onChange={this.handleSearch}
                                 className="InputBase"
                                 placeholder="Search" />
 
                             <div className='searchIcon'>
-                                <SearchIcon />
+                                <SearchIcon onClick={this.Search} />
                             </div>
 
                         </div>
-                        <div onClick={this.handleView} className="listviewIcon"><img src={viewIcon} alt="listicon"/></div>
+                        <div onClick={this.handleView} className="listviewIcon"><img src={viewIcon} alt="listicon" /></div>
 
                         <div><MenuComponent signOut={this.signOut} /></div>
                     </Toolbar>
 
-                   
+
                 </AppBar>
-                <LeftDrawer labels={this.state.labels} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} noteGetFunc={this.noteGetFunc} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} open={this.state.open} ClickSec={this.ClickSec}/>
+                <LeftDrawer labels={this.state.labels} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} noteGetFunc={this.noteGetFunc} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} open={this.state.open} ClickSec={this.ClickSec} />
                 <AddNoteComponent noteGetFunc={this.noteGetFunc} />
-                <NoteSection layout={this.state.list} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} TrashGet={this.TrashGet}  ArchiveGet={this.ArchiveGet} noteGetFunc={this.noteGetFunc} note={this.state.notes} labels={this.state.labels}/>
+                <NoteSection labelsArrayDash={this.state.labels} Search={this.Search} layout={this.state.list} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} noteGetFunc={this.noteGetFunc} note={this.state.notes} labels={this.state.labels} />
 
             </div>
-        )           
+        )
     }
 }
 
 export default DashboardComponent
-
-

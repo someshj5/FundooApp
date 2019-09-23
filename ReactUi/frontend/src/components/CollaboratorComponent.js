@@ -4,14 +4,19 @@ import PersonAdd from "@material-ui/icons/PersonAdd"
 import Done from "@material-ui/icons/Done"
 
 import { Dialog, DialogContent, DialogTitle, DialogActions, Divider, InputBase, ListItem, ListItemText, ListItemIcon } from '@material-ui/core';
+import NoteService from '../services/NoteService';
 
+
+const ColaboratorAdd = new NoteService().collaborator
 
 export default class CollaboratorComponent extends Component {
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state={
             Dopen:false,
-            isRename:false
+            isRename:false,
+            collabid:null,
+            id:props.id
         }
     }
 
@@ -36,6 +41,29 @@ export default class CollaboratorComponent extends Component {
             isRename:true
 
         })
+    }
+
+
+    handleCollabchange=(event)=>{
+        this.setState({
+            collabid:event.target.value
+        })
+        console.log("collabid",this.state.collabid)
+    }
+
+    Collabnote=()=>{
+        let updateData={
+            "email":this.state.collabid
+        }
+
+        ColaboratorAdd(updateData,this.props.id)
+        .then(res=>{
+            console.log("after colaboratorAdded", res.data)
+        })
+        .catch(error=>{
+            console.log("error colaaboratorAdd", error.response.data)
+        })
+
     }
 
 
@@ -71,11 +99,13 @@ export default class CollaboratorComponent extends Component {
                                  <ListItem>
                                   <ListItemText>  
                                  <InputBase
+                                 id='collabid'
+                                 onChange={this.handleCollabchange}
                                     onClick={this.handleAddCollab}
                                     style={{width:"110%"}}
                                     placeholder="Person or email to share with"/> 
                                 </ListItemText>
-                                <ListItemIcon style={{marginLeft:34}}><Done/></ListItemIcon>
+                                <ListItemIcon style={{marginLeft:34}}><Done onClick={this.Collabnote}/></ListItemIcon>
                                 </ListItem> :  
                                 <InputBase
                                 onClick={this.handleAddCollab}

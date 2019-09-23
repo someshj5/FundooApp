@@ -128,12 +128,12 @@ DATABASES = {
     }
 }
 
-host = os.getenv('host')
-port = os.getenv('port')
+redis_host = os.getenv('redis_host')
+redis_port = os.getenv('redis_port')
 
 CACHES = {
     'default': {
-        'BACKEND': os.getenv('BACKEND'),
+        'BACKEND': 'redis_cache.RedisCache',
         'LOCATION': os.getenv('LOCATION'),
         'OPTIONS': {
             'DB': os.getenv('DB'),

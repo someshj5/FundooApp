@@ -19,7 +19,8 @@ class LabelSerializers(serializers.ModelSerializer):
         model = Label
         fields = [
             'name',
-            'user'
+            'user',
+            'id'
         ]
 
     def create(self, validated_data):

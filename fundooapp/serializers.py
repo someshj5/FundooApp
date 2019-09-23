@@ -22,6 +22,9 @@ class UserSerializers(serializers.ModelSerializer):
             'username',
             'first_name',
             'last_name',
-            'password'
+            'password',
+            'avatar',
+            'profile_pic'
+
         )
 

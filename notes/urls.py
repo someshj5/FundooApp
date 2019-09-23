@@ -15,6 +15,7 @@ urlpatterns = [
     path('notes/', v1.NotesCreate.as_view(), name='notes'),
     path('notes/<int:pk>/', v1.NotesApi.as_view(), name='note_detail'),
 
+    path('upload/', v1.upload, name='upload'),
     path('search/', v1.search, name='search'),
     path('collaborators/<int:pk>/', v1.collaborator_view, name='collaborators'),
 
@@ -24,6 +25,8 @@ urlpatterns = [
     path('note_reminder/<int:pk>/', v1.note_reminder, name='note_reminder'),
 
     path('label/<int:pk>/', v2.LabelApi.as_view(), name='label_detail'),
+    path('labelnote/<int:pk>/', v2.labelNote, name='label_note'),
+
     path('label/', v2.LabelCreate.as_view(), name='label'),
 
 ]

@@ -55,6 +55,10 @@ class NoteService{
         return axios.put(baseUrl+"label/"+id+"/", data)
     }
 
+    collaborator(data,id){
+        return axios.put(baseUrl+"collaborators/"+id+"/",data)
+    }
+
 }
 
 export default NoteService;

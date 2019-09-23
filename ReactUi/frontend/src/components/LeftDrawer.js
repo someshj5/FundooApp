@@ -142,6 +142,8 @@ export class LeftDrawer extends Component {
     }
 
 
+
+
     handleDialogClose=()=>{
         this.setState({
             Dopen:false
@@ -172,7 +174,7 @@ export class LeftDrawer extends Component {
         const DrawerLabel = this.state.labels.map((label)=>{
             return <div style={{display:"labelTitle"}} className = "DrawerNote" key={label.id}>
                         <img src={labelIcon} alt="labelsvg"/>
-                        <p onClick={this.handleALabelGet}>{label.name}</p>
+                        <p>{label.name}</p>
                     </div>
 
         })

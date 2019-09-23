@@ -3,8 +3,12 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from auth import requiredLogin
 from labels.models import Label
 from labels.serializers import LabelSerializers
+from notes.models import Notes
+from notes.serializers import NoteSerializers
+from notes.service.Utility import Util
 
 
 def get_custom_response(success=False, message='something went wrong', data=[], status=400):
@@ -21,14 +25,16 @@ class LabelCreate(APIView):
     """
     This method is for the creating the label for the specific notes
     """
-
+    @requiredLogin
     def get(self, request):
         """
         :param request: request for data
         :return: returns the response
         """
         try:
-            noted = Label.objects.all()
+            userdata = Util.Getuser()
+            uid = userdata['id']
+            noted = Label.objects.filter(user=uid)
             if noted:
                 notedata = LabelSerializers(noted, many=True)
                 return Response(notedata.data, status=200)
@@ -37,6 +43,8 @@ class LabelCreate(APIView):
         except ValueError:
             return Response({'error': 'no such label'}, status=404)
 
+
+    @requiredLogin
     def post(self, request):
         """
         :param request: request for data
@@ -64,6 +72,7 @@ class LabelCreate(APIView):
 
 class LabelApi(APIView):
 
+    @requiredLogin
     def get(self, request, pk):
         """
         :param pk: the primary key of label
@@ -80,6 +89,7 @@ class LabelApi(APIView):
         except ValueError:
             return Response({'error': 'no such label'}, status=404)
 
+    @requiredLogin
     def delete(self, request, pk):
         """
         :param pk: the primary key of label
@@ -97,6 +107,7 @@ class LabelApi(APIView):
         except ValueError:
             return Response({'error': 'no such label'}, status=404)
 
+    @requiredLogin
     def put(self, request, pk):
         """
         :param pk: the primary key of label
@@ -116,3 +127,20 @@ class LabelApi(APIView):
                 raise ValueError
         except ValueError:
             return Response({'error': 'no such label'}, status=404)
+
+
+@requiredLogin
+def labelNote(request,pk):
+    try:
+        userdata = Util.Getuser()
+        uid = userdata['id']
+        label = Label.objects.get(user=uid, pk=pk)
+        if label:
+            notedata = label.notes_set.all()
+            noteser = NoteSerializers(notedata, many=True)
+            return Response(noteser.data, status=200)
+        else:
+            raise ValueError
+    except ValueError:
+        return Response({'error':'no such label'}, status=404)
+

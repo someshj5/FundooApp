@@ -9,18 +9,21 @@ import jwt
 
 def requiredLogin(function):
     """
-
     :param function: the original function
     :return: the users id which is logged in
     """
     def wrapper(*args, **kwargs):
         try:
             redisCache = Redis()
+            print("in wrapper")
             redis_token = redisCache.get('token')
+            print("token in wrapper", redis_token)
             decode = jwt.decode(redis_token, "SECRET_KEY", algorithm="HS256")
-            user_id = decode.get('id')
+            print("after decode", decode)
+            user_id = decode['id']
+
             user = User.objects.get(pk=user_id)
-            if user_id:
+            if user:
                 return function(*args, **kwargs)
         except User.DoesNotExist:
             return Response('Permission Denied!')

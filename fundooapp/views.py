@@ -158,18 +158,21 @@ def user_login(request):
             print(request.data)
             user = authenticate(email=email, password=password)
 
-
             print(user, '----x')
             if user:
                 payload = {
                     'id': user.id,
                     'email': user.email
                 }
-                jwt_token = {'token': jwt.encode(
+                jwt_token = jwt.encode(
                     payload, "SECRET_KEY",
-                    algorithm="HS256").decode('utf-8')}
+                    algorithm="HS256").decode('utf-8')
+                r = Redis()
+                print('Redis', r)
 
-                # r.set('token', jwt_token['token'])
+                print("token+++++", jwt_token)
+
+                r.set('token', jwt_token)
                 login(request, user)
                 return Response({'message': 'login successfull', 'token': jwt_token},
                                 status=200,
@@ -182,7 +185,7 @@ def user_login(request):
         # except ValueError:
         #     return Response({'error': 'Enter Valid Data'}, status=400)
 
-        return HttpResponse({"success":True})
+        return HttpResponse({"success": True})
 
 
 @api_view(["POST"])
@@ -214,7 +217,7 @@ def forgot_password(request):
                 email = EmailMessage(subject, message, to=[to_email])
                 email.send()
                 # print('xyz')
-                return Response({'message':'We have sent you the link to reset your password'}, status=201)
+                return Response({'message': 'We have sent you the link to reset your password'}, status=201)
             else:
                 raise ValueError
         except ValueError:

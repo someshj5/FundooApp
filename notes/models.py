@@ -19,16 +19,16 @@ class Notes(models.Model):
     is_archive = models.BooleanField(default=False)
     is_Trash = models.BooleanField(default=False)
     is_pinned = models.BooleanField(default=False)
-    reminder = models.DateField(blank=True, null=True)
+    reminder = models.DateTimeField(blank=True, null=True)
     url = models.URLField(max_length=200, blank=True, null=True)
     color = models.CharField(max_length=255, blank=True, null=True)
-    created_at = models.DateField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owner')
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='owner')
 
 
-class ProfilePic(models.Model):
-    """
-    class ProfilePic using Foreignkey field
-    """
-    profile_pic = models.URLField(max_length=999, blank=True, null=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
+# class ProfilePic(models.Model):
+#     """
+#     class ProfilePic using Foreignkey field
+#     """
+#     profile_pic = models.URLField(max_length=999, blank=True, null=True)
+#     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
