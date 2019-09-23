@@ -19,6 +19,7 @@ import DialogLabelEdit from './DialogLabelEdit';
 const DrawerLabelGet = new NoteService().getLabels
 const LabelCreate = new NoteService().createLabel
 const GetLabel = new NoteService().getLabels
+const LabelsNote = new NoteService().getLabelsNote
 
 
 
@@ -164,6 +165,13 @@ export class LeftDrawer extends Component {
     }
 
 
+    GetLabelsNote=(event)=>{
+        this.props.labelName(event.target.id)
+        
+        
+    }
+
+
 
 
 
@@ -174,7 +182,7 @@ export class LeftDrawer extends Component {
         const DrawerLabel = this.state.labels.map((label)=>{
             return <div style={{display:"labelTitle"}} className = "DrawerNote" key={label.id}>
                         <img src={labelIcon} alt="labelsvg"/>
-                        <p>{label.name}</p>
+                        <p id={label.name} onClick={this.GetLabelsNote}>{label.name}</p>
                     </div>
 
         })

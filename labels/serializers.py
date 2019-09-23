@@ -17,11 +17,7 @@ class LabelSerializers(serializers.ModelSerializer):
         class Meta to define fields for the model
         """
         model = Label
-        fields = [
-            'name',
-            'user',
-            'id'
-        ]
+        fields = "__all__"
 
     def create(self, validated_data):
         return Label.objects.create(**validated_data)

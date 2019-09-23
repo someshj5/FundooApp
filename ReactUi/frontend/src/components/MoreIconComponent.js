@@ -78,6 +78,7 @@ export default class MoreIconComponent extends Component {
         TrashAnote(UpdateData, this.state.id)
 
             .then(res => {
+
                 console.log("is_trash update", res)
                 this.props.noteGetFunc()
             })
@@ -119,7 +120,8 @@ export default class MoreIconComponent extends Component {
         .then(res=>{
             
             this.LabelsGet()
-            console.log("Label created", res.data)
+            console.log("***********************",typeof sessionStorage.getItem("userid") )
+            console.log("Label created", res.data.message)
         })
         .catch(error=>{
             console.log("error label", error.response.data)
@@ -130,6 +132,7 @@ export default class MoreIconComponent extends Component {
 
 
     render() {
+        // typeof(sessionStorage.getItem("userid"));
         let MenuLabelS = "none"
         let MenuLabelF = "block"
         if (this.state.toggleLabelMenu) {

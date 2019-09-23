@@ -42,6 +42,7 @@ export class DashboardComponent extends Component {
             menuOpen: false,
             redirect: false,
             notes: [],
+            name:null,
             searchArray:[],
             labels: [],
             search: null,
@@ -102,6 +103,15 @@ export class DashboardComponent extends Component {
                 console.log("label error", error.response.data)
             })
     }
+
+    labelName=(data)=>{
+        this.setState({
+            name:data
+        })
+        console.log("")
+    }
+
+
 
 
     ArchiveGet = () => {
@@ -173,7 +183,7 @@ Search=()=>{
         SearchQuery(query)
         .then(res=>{
             this.setState({
-                notes : res.data.data
+                notes : res.data
             })
             console.log("search results", this.state.notes)
             
@@ -240,7 +250,7 @@ Search=()=>{
 
 
                 </AppBar>
-                <LeftDrawer labels={this.state.labels} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} noteGetFunc={this.noteGetFunc} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} open={this.state.open} ClickSec={this.ClickSec} />
+                <LeftDrawer labelName={this.labelName} labels={this.state.labels} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} noteGetFunc={this.noteGetFunc} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} open={this.state.open} ClickSec={this.ClickSec} />
                 <AddNoteComponent noteGetFunc={this.noteGetFunc} />
                 <NoteSection labelsArrayDash={this.state.labels} Search={this.Search} layout={this.state.list} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} noteGetFunc={this.noteGetFunc} note={this.state.notes} labels={this.state.labels} />
 

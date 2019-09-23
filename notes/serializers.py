@@ -21,7 +21,6 @@ class NoteSerializers(serializers.ModelSerializer):
         fields = "__all__"
         extra_kwargs = {'user': {'required': False}}
 
-
     def create(self, validated_data):
         return Notes.objects.create(**validated_data)
 

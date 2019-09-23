@@ -25,7 +25,7 @@ urlpatterns = [
     path('note_reminder/<int:pk>/', v1.note_reminder, name='note_reminder'),
 
     path('label/<int:pk>/', v2.LabelApi.as_view(), name='label_detail'),
-    path('labelnote/<int:pk>/', v2.labelNote, name='label_note'),
+    path('labelnote/<labelname>/', v2.labelNote, name='label_note'),
 
     path('label/', v2.LabelCreate.as_view(), name='label'),
 

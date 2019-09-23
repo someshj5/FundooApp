@@ -55,8 +55,12 @@ class NoteService{
         return axios.put(baseUrl+"label/"+id+"/", data)
     }
 
+    getLabelsNote(name){
+        return axios.get(baseUrl+"labelnote/"+name+"/")
+    }
+
     collaborator(data,id){
-        return axios.put(baseUrl+"collaborators/"+id+"/",data)
+        return axios.post(baseUrl+"collaborators/"+id+"/",data)
     }
 
 }

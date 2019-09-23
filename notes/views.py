@@ -382,3 +382,72 @@ def note_reminder(request, pk):
         return Response({"message": "reminder date added"}, status=200)
     else:
         return Response(notes.data, status=200)
+
+
+class CollaboratorCount(APIView):
+
+    def post(self, request, pk):
+        try:
+            notes = Notes.objects.get(pk=pk)
+            email = request.data.get('email')
+            user = User.objects.get(email=email)
+            if email:
+                if user:
+                    if user in notes.collaborator.all():
+                        return Response({'message': ' collaborator already added'}, status=400)
+                    notes.collaborator.add(user)
+                    CollabCount = notes.collaborator.count()
+                    return Response({'message': CollabCount}, status=201)
+            else:
+                logger.warning("no email id present")
+                raise ValueError
+
+        except ValueError:
+            return Response({'error': 'Invalid details'}, status=400)
+
+        except User.DoesNotExist:
+            return Response({"error": "user does not exist"}, status=404)
+
+    def delete(self, request,pk):
+        try:
+            notes = Notes.objects.get(pk=pk)
+            email = request.data.get('email')
+            user = User.objects.get(email=email)
+            if email:
+                if user:
+                    if user in notes.collaborator.all():
+                        notes.collaborator.remove(user)
+                        CollabCount = notes.collaborator.count()
+                        return Response({'message': CollabCount}, status=201)
+                    return Response({'error':'no user present'}, status=400)
+            else:
+                logger.warning("no email id present")
+                raise ValueError
+
+        except ValueError:
+            return Response({'error': 'Invalid details'}, status=400)
+
+        except User.DoesNotExist:
+            return Response({"error": "user does not exist"}, status=404)
+
+    def get(self, pk):
+        try:
+            notes = Notes.objects.get(pk=pk)
+            if notes:
+                collaboratedNotes = notes.collaborator.all()
+                collabCount = notes.collaborator.count()
+                noteSer = NoteSerializers(collaboratedNotes, many=True)
+                return Response({'data': noteSer, 'count': collabCount}, status=200)
+            else:
+                raise ValueError
+        except ValueError:
+            return Response({'error':'no such notes'}, status=404)
+
+
+
+
+
+
+
+
+

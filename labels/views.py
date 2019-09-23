@@ -1,9 +1,10 @@
-
 # Create your views here.
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from auth import requiredLogin
+from fundooapp.models import User
 from labels.models import Label
 from labels.serializers import LabelSerializers
 from notes.models import Notes
@@ -25,6 +26,7 @@ class LabelCreate(APIView):
     """
     This method is for the creating the label for the specific notes
     """
+
     @requiredLogin
     def get(self, request):
         """
@@ -42,7 +44,6 @@ class LabelCreate(APIView):
                 raise ValueError
         except ValueError:
             return Response({'error': 'no such label'}, status=404)
-
 
     @requiredLogin
     def post(self, request):
@@ -130,17 +131,19 @@ class LabelApi(APIView):
 
 
 @requiredLogin
-def labelNote(request,pk):
+@api_view(['GET', 'POST'])
+def labelNote(request, labelname):
     try:
         userdata = Util.Getuser()
         uid = userdata['id']
-        label = Label.objects.get(user=uid, pk=pk)
-        if label:
-            notedata = label.notes_set.all()
+        labels = Label.objects.get(user=uid, name=labelname)
+        print("labeldata******", labels)
+        if labels:
+            notedata = labels.notes_set.all()
+            print("--------", notedata)
             noteser = NoteSerializers(notedata, many=True)
-            return Response(noteser.data, status=200)
+            return Response({'data': noteser.data}, status=200)
         else:
             raise ValueError
     except ValueError:
-        return Response({'error':'no such label'}, status=404)
-
+        return Response({'error': 'no such label'}, status=404)
