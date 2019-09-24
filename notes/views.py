@@ -1,16 +1,19 @@
 """
     :author: Somesh Jaiswal
-    :since:
+    :since: May 2019
     :overview:
 """
 import imghdr
 import pickle
 import logging
+
+from rest_framework.permissions import AllowAny
+
 from fundooapp.models import User
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -36,10 +39,10 @@ logger = logging.getLogger(__name__)
 def get_custom_response(success=False, message='something went wrong', data=[], status=400):
     """
 
-    :param success:
-    :param message:
-    :param data:
-    :param status:
+    :param success: returns the response on success
+    :param message: returns the actual message
+    :param data: returns the data
+    :param status: returns the status of the api
     :return:
     """
     response = {
@@ -54,6 +57,7 @@ def get_custom_response(success=False, message='something went wrong', data=[], 
 @csrf_exempt
 @requiredLogin
 @api_view(['POST'])
+@permission_classes((AllowAny,))
 def upload(request):
     """
     The method uploads the image files to the S3 bucket
@@ -92,6 +96,7 @@ def upload(request):
         return Response({'error': 'no image detected'}, status=400)
 
 
+@permission_classes((AllowAny,))
 class NotesCreate(APIView):
     """
     This method creates notes for the application
@@ -107,8 +112,10 @@ class NotesCreate(APIView):
             userdata = Util.Getuser()
             uid = userdata['id']
 
-            noted = Notes.objects.filter(is_Trash=False, is_archive=False).order_by('-created_at')
+            noted = Notes.objects.filter(user=uid, is_Trash=False, is_archive=False).order_by('-created_at')
             if noted:
+                print("in header", request.META['HTTP_AUTHORIZATION'])
+
                 notedata = NoteSerializers(noted, many=True)
                 obj = pickle.dumps(notedata.data)
                 redisCache.set('note', obj)
@@ -164,6 +171,7 @@ class NotesCreate(APIView):
         return response
 
 
+@permission_classes((AllowAny,))
 class NotesApi(APIView):
     """
     This methods are for updating, deleting and getting the notes created.
@@ -236,6 +244,7 @@ class NotesApi(APIView):
             return Response({"message": "lklkdflkdsf"}, status=404)
 
 
+@permission_classes((AllowAny,))
 class Trash(APIView):
     """
     This method is for trash notes visiblity
@@ -248,7 +257,9 @@ class Trash(APIView):
         :return: returns the response
         """
         try:
-            note_trash = Notes.objects.filter(is_Trash=True)
+            userdata = Util.Getuser()
+            uid = userdata['id']
+            note_trash = Notes.objects.filter(user=uid, is_Trash=True)
             note = NoteSerializers(note_trash, many=True)
             if note:
                 return Response(note.data, status=200)
@@ -259,6 +270,7 @@ class Trash(APIView):
             return Response({'message': 'nothing in trash'}, status=400)
 
 
+@permission_classes((AllowAny,))
 class Archived(APIView):
     """
     This method is for Archived notes
@@ -271,7 +283,9 @@ class Archived(APIView):
         :return: returns the response
         """
         try:
-            note_archive = Notes.objects.filter(is_archive=True)
+            userdata = Util.Getuser()
+            uid = userdata['id']
+            note_archive = Notes.objects.filter(user=uid, is_archive=True)
             note = NoteSerializers(note_archive, many=True)
             if note:
                 return Response(note.data, status=200)
@@ -282,6 +296,7 @@ class Archived(APIView):
             return Response({'message': 'no archives found'}, status=400)
 
 
+@permission_classes((AllowAny,))
 class Reminder(APIView):
     """
     This method is for reminder for notes
@@ -295,7 +310,9 @@ class Reminder(APIView):
         :return: returns the response
         """
         try:
-            reminder = Notes.objects.exclude(reminder__isnull=True)
+            userdata = Util.Getuser()
+            uid = userdata['id']
+            reminder = Notes.objects.filter(user=uid, reminder__isnull=False)
             notes = NoteSerializers(reminder, many=True)
             print(datetime.date)
             # reminder = datetime.datetime.now() - datetime.timedelta(days=90)
@@ -311,6 +328,7 @@ class Reminder(APIView):
 
 @api_view(["GET"])
 @requiredLogin
+@permission_classes((AllowAny,))
 def search(request):
     """
     :param request: for the keyword to search
@@ -342,6 +360,7 @@ def search(request):
 
 @api_view(['GET', 'POST'])
 @requiredLogin
+@permission_classes((AllowAny,))
 def collaborator_view(request, pk):
     """
     :param request: requesting user for id and email
@@ -374,7 +393,13 @@ def collaborator_view(request, pk):
 
 
 @api_view(['POST', 'GET'])
+@permission_classes((AllowAny,))
 def note_reminder(request, pk):
+    """
+        :param request: requesting user for id and email
+        :param pk: users id
+        :return: the response of collaborator added successfully
+        """
     notes = Notes.objects.get(pk=pk)
     if request.method == 'POST':
         notes.reminder = datetime.date.today()
@@ -384,9 +409,18 @@ def note_reminder(request, pk):
         return Response(notes.data, status=200)
 
 
+@permission_classes((AllowAny,))
 class CollaboratorCount(APIView):
+    """
+    This is a method for Collaborator count
+    """
 
     def post(self, request, pk):
+        """
+            :param request: requesting user for id and email
+            :param pk: users id
+            :return: the response of collaborator added successfully
+            """
         try:
             notes = Notes.objects.get(pk=pk)
             email = request.data.get('email')
@@ -408,7 +442,12 @@ class CollaboratorCount(APIView):
         except User.DoesNotExist:
             return Response({"error": "user does not exist"}, status=404)
 
-    def delete(self, request,pk):
+    def delete(self, request, pk):
+        """
+            :param request: requesting user for id and email
+            :param pk: users id
+            :return: the response of collaborator added successfully
+            """
         try:
             notes = Notes.objects.get(pk=pk)
             email = request.data.get('email')
@@ -419,7 +458,7 @@ class CollaboratorCount(APIView):
                         notes.collaborator.remove(user)
                         CollabCount = notes.collaborator.count()
                         return Response({'message': CollabCount}, status=201)
-                    return Response({'error':'no user present'}, status=400)
+                    return Response({'error': 'no user present'}, status=400)
             else:
                 logger.warning("no email id present")
                 raise ValueError
@@ -431,6 +470,10 @@ class CollaboratorCount(APIView):
             return Response({"error": "user does not exist"}, status=404)
 
     def get(self, pk):
+        """
+         :param pk: users id
+         :return: the response of collaborator added successfully
+        """
         try:
             notes = Notes.objects.get(pk=pk)
             if notes:
@@ -441,13 +484,4 @@ class CollaboratorCount(APIView):
             else:
                 raise ValueError
         except ValueError:
-            return Response({'error':'no such notes'}, status=404)
-
-
-
-
-
-
-
-
-
+            return Response({'error': 'no such notes'}, status=404)

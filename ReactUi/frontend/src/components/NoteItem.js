@@ -170,6 +170,7 @@ export default class NoteItem extends Component {
             <div className="ParentCard" >
                 <Card className={layout} style={{ background: this.state.color, boxShadow: noteCardShadow }}>
                     <CardContent onClick={this.handleDialogOpen}>
+                        <span></span>
                         <p>{this.props.noteobj.title}</p>
                         <p>{this.props.noteobj.text}</p>
                         <p>{reminderChip}</p>

@@ -1,6 +1,6 @@
 """
     :author: Somesh Jaiswal
-    :since:
+    :since: May 2019
     :overview:
 """
 #
@@ -19,7 +19,9 @@ from django.utils.encoding import force_bytes
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.utils.http import urlsafe_base64_encode
-from rest_framework.decorators import api_view
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from auth import requiredLogin
@@ -65,6 +67,7 @@ def home(request):
 
 
 @api_view(['POST'])
+@permission_classes((AllowAny,))
 def signupjwt(request):
     """
     This method is used for  jwt token based registration
@@ -145,6 +148,7 @@ def activatejwt(request, token):
 
 
 @api_view(["POST"])
+@permission_classes((AllowAny,))
 def user_login(request):
     """
     This method is for User login at the app
@@ -174,7 +178,7 @@ def user_login(request):
 
                 r.set('token', jwt_token)
                 login(request, user)
-                return Response({'message': 'login successfull', 'token': jwt_token},
+                return Response({'message': 'login successfull', 'token': jwt_token, 'id': user.pk},
                                 status=200,
                                 )
 

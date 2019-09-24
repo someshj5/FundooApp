@@ -1,23 +1,34 @@
+"""
+    :author: Somesh Jaiswal
+    :since: May 2019
+    :overview:
+"""
+
+
 import pytest
 import requests
 
+baseUrl = ' http://127.0.0.1:8000/notes/'
+notedata = {
+    "title": "somesh12233",
+    "text": "someshdata223",
+    "label": "[]",
+    "picture": "null",
+    "collaborator": "[]",
+    "is_archive": "false",
+    "is_Trash": "false",
+    "is_pinned": "false",
+    "reminder": "null",
+    "url": "null",
+    "color": "null",
+    "user": "7"
+
+}
+
 
 def test_NoteCreate():
-    url = ' http://127.0.0.1:8000/notes/notes/'
-    data = {
-            "title": "somesh12233",
-            "text": "someshdata223",
-            "label": "[]",
-            "picture": "null",
-            "collaborator": "[]",
-            "is_archive": "false",
-            "is_Trash": "false",
-            "is_pinned": "false",
-            "reminder": "null",
-            "url": "null",
-            "color": "null",
-            "user": "7"
-            }
+    url = baseUrl+'notes/'
+    data = notedata
 
     response = requests.post(url=url, data=data)
 
@@ -25,7 +36,7 @@ def test_NoteCreate():
 
 
 def test_NoteDetail():
-    url = 'http://127.0.0.1:8000/notes/notes/'
+    url = baseUrl+'notes/'
 
     response = requests.get(url=url)
 
@@ -33,21 +44,8 @@ def test_NoteDetail():
 
 
 def test_NoteUpdate():
-    url = 'http://127.0.0.1:8000/notes/notes/2/'
-    data = {
-        "title": "null",
-        "text": "this is my note",
-        "label": "[]",
-        "picture": "null",
-        "collaborator": "[]",
-        "is_archive": "false",
-        "is_Trash": "false",
-        "is_pinned": "false",
-        "reminder": "null",
-        "url": "null",
-        "color": "null",
-        "user": "2"
-    }
+    url = baseUrl+'notes/2/'
+    data = notedata
 
     response = requests.put(url=url, data=data)
 
@@ -55,7 +53,7 @@ def test_NoteUpdate():
 
 
 def test_NoteDelete():
-    url = 'http://127.0.0.1:8000/notes/notes/3/'
+    url = baseUrl+'notes/3/'
 
     response = requests.delete(url=url)
 
@@ -63,7 +61,7 @@ def test_NoteDelete():
 
 
 def test_Collaborator():
-    url = 'http://127.0.0.1:8000/notes/collaborators/3/'
+    url = baseUrl+'collaborators/3/'
 
     response = requests.get(url=url)
 
@@ -71,7 +69,7 @@ def test_Collaborator():
 
 
 def test_Collab_create():
-    url = 'http://127.0.0.1:8000/notes/collaborators/3/'
+    url = baseUrl+'collaborators/3/'
     data = {
         "email": "someshj5@gmail.com"
     }

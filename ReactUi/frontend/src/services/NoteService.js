@@ -3,15 +3,21 @@ import axios from 'axios'
 
 const baseUrl = require("../config/key").baseUrl
 
+let loginToken = localStorage.getItem('token')
+
+var headerData={
+    Authorization:loginToken
+}
+
 class NoteService{
 
     getNotesAll(){
-        return axios.get(baseUrl+"notes/")
+        return axios.get(baseUrl+"notes/",{headers:headerData})
     }
 
     createNote(data){
 
-        return axios.post(baseUrl+"notes/", data)
+        return axios.post(baseUrl+"notes/", data,{headers:headerData})
     }
 
     getANote(id){
@@ -61,6 +67,9 @@ class NoteService{
 
     collaborator(data,id){
         return axios.post(baseUrl+"collaborators/"+id+"/",data)
+    }
+    search(data){
+        return axios.get(baseUrl+"search/?query="+data)
     }
 
 }

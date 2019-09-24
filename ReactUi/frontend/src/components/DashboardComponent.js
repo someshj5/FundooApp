@@ -27,6 +27,8 @@ const getTrashNotes = new NoteService().getTrash
 const getReminderNotes = new NoteService().getReminders
 const DrawerLabelGet = new NoteService().getLabels
 const SearchQuery = new NoteService().search
+const LabelsNote = new NoteService().getLabelsNote
+
 
 
 
@@ -104,11 +106,33 @@ export class DashboardComponent extends Component {
             })
     }
 
-    labelName=(data)=>{
+
+
+
+        labelName(data){
+        console.log("data label "+data);
+        
         this.setState({
-            name:data
+            name:data,
+            notes:[]
         })
-        console.log("")
+        console.log("label name from left drawer data",this.state.name)
+        LabelsNote(data)
+        .then(res=>{
+            this.setState({
+                notes: res.data.data
+            })
+            console.log("LAbeled note on dash data", res.data.data)
+        })
+        .catch(error=>{
+            console.log("Labeled note on dash error", error.response.data)
+        })
+    }
+
+
+
+    LabelsOnDash=(data)=>{
+       this.labelName(data)
     }
 
 
@@ -169,16 +193,45 @@ export class DashboardComponent extends Component {
             is_search:true,
             search: event.target.value
         })
-        console.log("searchinput", this.state.search)}
+
+        let query = event.target.value
+   
+    if(event.target.value === ""){
+        this.setState({
+            notes:[],
+            is_search:false,
+        })
+        this.noteGetFunc()
+    }
+    else{
+        this.setState({ notes: [] })
+        SearchQuery(query)
+        .then(res=>{
+            this.setState({
+                notes : res.data
+            })
+            console.log("search results", res.data)
+            
+        })
+    
+        .catch(error=>{
+            console.log("serach errors", error)
+        })
+       
+    }
+    }
+    
 
     
 Search=()=>{
     let query = this.state.search
    
     if(this.state.search === ""){
-        this.setState({ is_search: false })
+        this.setState({
+            is_search:false,
+        })
     }
-    else{
+    if(this.state.is_search){
         this.setState({ notes: [] })
         SearchQuery(query)
         .then(res=>{
@@ -250,9 +303,9 @@ Search=()=>{
 
 
                 </AppBar>
-                <LeftDrawer labelName={this.labelName} labels={this.state.labels} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} noteGetFunc={this.noteGetFunc} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} open={this.state.open} ClickSec={this.ClickSec} />
+                <LeftDrawer LabelsOnDash={this.LabelsOnDash} labelName={this.labelName} labels={this.state.labels} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} noteGetFunc={this.noteGetFunc} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} open={this.state.open} ClickSec={this.ClickSec} />
                 <AddNoteComponent noteGetFunc={this.noteGetFunc} />
-                <NoteSection labelsArrayDash={this.state.labels} Search={this.Search} layout={this.state.list} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} noteGetFunc={this.noteGetFunc} note={this.state.notes} labels={this.state.labels} />
+                <NoteSection labelName={this.labelName} labelsArrayDash={this.state.labels} Search={this.Search} handleSearch={this.handleSearch} layout={this.state.list} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} noteGetFunc={this.noteGetFunc} note={this.state.notes} labels={this.state.labels} />
 
             </div>
         )

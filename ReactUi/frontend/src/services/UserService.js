@@ -3,6 +3,8 @@ import axios from 'axios'
 const baseUserUrl = require("../config/key").baseUserUrl
 
 
+
+
 class UserService{
 
     signup_service(data){
@@ -11,7 +13,7 @@ class UserService{
 
 
     login_service(data){
-        return axios.post(baseUserUrl+"user_login/", data)
+        return axios.post(baseUserUrl+"user_login/", data,)
     }
 
     forgotPassword_service(data){
