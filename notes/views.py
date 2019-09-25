@@ -7,6 +7,7 @@ import imghdr
 import pickle
 import logging
 
+from django.core import serializers
 from rest_framework.permissions import AllowAny
 
 from fundooapp.models import User
@@ -20,7 +21,7 @@ from rest_framework.views import APIView
 from auth import requiredLogin
 import datetime
 
-from fundooapp.serializers import UserSerializers
+from fundooapp.serializers import UserSerializers, SimplePersonSerializer
 from notes.models import Notes
 from notes.serializers import NoteSerializers
 from notes.service import Utility
@@ -102,7 +103,7 @@ class NotesCreate(APIView):
     This method creates notes for the application
     """
 
-    @requiredLogin
+    # @requiredLogin
     def get(self, request):
         """
         :param request: request for data
@@ -327,7 +328,6 @@ class Reminder(APIView):
 
 
 @api_view(["GET"])
-@requiredLogin
 @permission_classes((AllowAny,))
 def search(request):
     """
@@ -359,7 +359,7 @@ def search(request):
 
 
 @api_view(['GET', 'POST'])
-@requiredLogin
+# @requiredLogin
 @permission_classes((AllowAny,))
 def collaborator_view(request, pk):
     """
@@ -371,9 +371,11 @@ def collaborator_view(request, pk):
     note = Notes.objects.get(pk=pk)
     try:
         if request.method == "GET":
-            if note:
-                serial_note = NoteSerializers(note)
-                return Response(serial_note.data, status=200)
+            if email:
+                user = User.objects.get(email=email)
+                userlist = User.objects.exclude(username__contains=user.username)
+                # serial_note = NoteSerializers(note)
+                return Response(userlist, status=200)
 
         if request.method == "POST":
             if email:
@@ -392,8 +394,40 @@ def collaborator_view(request, pk):
         return Response({"error": "user does not exist"}, status=404)
 
 
-@api_view(['POST', 'GET'])
+@api_view(['GET'])
+# @requiredLogin
 @permission_classes((AllowAny,))
+def collaborator_GetView(request):
+    """
+    :param request: requesting user for id and email
+    :param pk: users id
+    :return: the response of collaborator added successfully
+    """
+    try:
+        userlist = User.objects.all()
+        # userlist = User.objects.exclude(first_name__contains=user.username)
+        fields = ('username','email')
+        userser = SimplePersonSerializer(userlist, many=True, fields=fields).data
+        # userser = serializers.serialize('json',userlist, fields=('username', 'email'))
+        # print(userser['username'])
+        # serial_note = NoteSerializers(note)
+        return Response({'data': userser}, status=200)
+    #         else:
+    #             logger.warning("no email id present")
+    #             raise ValueError
+    # except ValueError:
+    #     return Response({'error': 'Invalid details'}, status=400)
+    except User.DoesNotExist:
+        return Response({"error": "user does not exist"}, status=404)
+
+
+
+
+
+
+@api_view(['POST', 'GET'])
+# @permission_classes((AllowAny,))
+@requiredLogin
 def note_reminder(request, pk):
     """
         :param request: requesting user for id and email
@@ -401,6 +435,8 @@ def note_reminder(request, pk):
         :return: the response of collaborator added successfully
         """
     notes = Notes.objects.get(pk=pk)
+    print("in wrappwr header", request.META(['HTTP_AUTHORIZATION']))
+
     if request.method == 'POST':
         notes.reminder = datetime.date.today()
         notes.save()

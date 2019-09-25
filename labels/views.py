@@ -5,7 +5,8 @@
 """
 
 # Create your views here.
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -28,6 +29,7 @@ def get_custom_response(success=False, message='something went wrong', data=[], 
     return Response(response, status=status)
 
 
+@permission_classes((AllowAny,))
 class LabelCreate(APIView):
     """
     This method is for the creating the label for the specific notes
@@ -77,6 +79,7 @@ class LabelCreate(APIView):
             return Response(serialize.errors, status=201)
 
 
+@permission_classes((AllowAny,))
 class LabelApi(APIView):
 
     @requiredLogin
@@ -136,7 +139,8 @@ class LabelApi(APIView):
             return Response({'error': 'no such label'}, status=404)
 
 
-@requiredLogin
+# @requiredLogin
+@permission_classes((AllowAny,))
 @api_view(['GET', 'POST'])
 def labelNote(request, labelname):
     try:

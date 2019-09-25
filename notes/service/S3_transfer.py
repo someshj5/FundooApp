@@ -27,7 +27,7 @@ class S3Upload:
 
             url = 'http: // {}.s3.{}.amazonaws.com / {}'.format('somesh-static', s3.meta.region_name,  imagename)
 
-            # https: // somesh - static.s3.ap - south - 1.amazonaws.com / nature2.jpeg
+                 # https: // somesh - static.s3.ap - south - 1.amazonaws.com / nature2.jpeg
 
             # https:// somesh-static.s3.ap-south-1.amazonaws.com/nature.jpeg
             print(url)

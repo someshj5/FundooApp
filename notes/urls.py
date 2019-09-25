@@ -18,6 +18,7 @@ urlpatterns = [
     path('upload/', v1.upload, name='upload'),
     path('search/', v1.search, name='search'),
     path('collaborators/<int:pk>/', v1.collaborator_view, name='collaborators'),
+    path('Getcollaborators/', v1.collaborator_GetView, name='Getcollaborators'),
 
     path('trash/', v1.Trash.as_view(), name='trash'),
     path('archive/', v1.Archived.as_view(), name='archive'),

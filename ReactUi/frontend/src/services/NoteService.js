@@ -46,7 +46,7 @@ class NoteService{
     }
 
     getLabels(){
-        return axios.get(baseUrl+"label/")
+        return axios.get(baseUrl+"label/",{headers:headerData})
     }
 
     createLabel(data){
@@ -62,14 +62,17 @@ class NoteService{
     }
 
     getLabelsNote(name){
-        return axios.get(baseUrl+"labelnote/"+name+"/")
+        return axios.get(baseUrl+"labelnote/"+name+"/",{headers:headerData})
     }
 
     collaborator(data,id){
         return axios.post(baseUrl+"collaborators/"+id+"/",data)
     }
+    collaboratorGet(){
+        return axios.get(baseUrl+"Getcollaborators/")
+    }
     search(data){
-        return axios.get(baseUrl+"search/?query="+data)
+        return axios.get(baseUrl+"search/?query="+data,{headers:headerData})
     }
 
 }
