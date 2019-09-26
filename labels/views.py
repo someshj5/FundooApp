@@ -140,8 +140,8 @@ class LabelApi(APIView):
 
 
 # @requiredLogin
-@permission_classes((AllowAny,))
 @api_view(['GET', 'POST'])
+@permission_classes((AllowAny,))
 def labelNote(request, labelname):
     try:
         userdata = Util.Getuser()

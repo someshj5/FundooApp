@@ -9,8 +9,6 @@ import '../App.css'
 import keep_icon from '../svg_icons/keep_icon.png'
 import listView from '../svg_icons/listview.svg'
 import gridView from '../svg_icons/gridview.svg'
-
-
 import LeftDrawer from './LeftDrawer'
 import Redirect from 'react-router-dom/Redirect'
 // import GetAllNotesComponent from './GetAllNotesComponent';
@@ -23,6 +21,7 @@ import NoteService from '../services/NoteService';
 
 const get_NotesAll = new NoteService().getNotesAll
 const getArchiveNotes = new NoteService().getArchives
+const getPinnedNotes = new NoteService().getPinned
 const getTrashNotes = new NoteService().getTrash
 const getReminderNotes = new NoteService().getReminders
 const DrawerLabelGet = new NoteService().getLabels
@@ -55,6 +54,7 @@ export class DashboardComponent extends Component {
     }
 
     componentDidMount() {
+        // this.PinnedGet();
         this.DrawerLabels();
         this.noteGetFunc();
         // this.DrawerLabels()
@@ -162,6 +162,21 @@ export class DashboardComponent extends Component {
             })
     }
 
+
+
+    PinnedGet = () => {
+        this.setState({ notes: [] })
+        console.log("notes", this.state.notes);
+
+        getPinnedNotes()
+            .then(res => {
+                this.setState({ notes: res.data })
+            })
+            .catch(error => {
+                console.log("error pinned ", error.response)
+            })
+    }
+
     ReminderGet = () => {
         this.setState({ notes: [] })
         getReminderNotes()
@@ -262,6 +277,8 @@ Search=()=>{
             viewIcon = gridView
         }
 
+       
+
 
         return (
             <div className='root' id="main">
@@ -305,6 +322,7 @@ Search=()=>{
                 </AppBar>
                 <LeftDrawer LabelsOnDash={this.LabelsOnDash} labelName={this.labelName} labels={this.state.labels} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} noteGetFunc={this.noteGetFunc} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} open={this.state.open} ClickSec={this.ClickSec} />
                 <AddNoteComponent noteGetFunc={this.noteGetFunc} />
+                <p id="pinnedTitle">Pinned</p>
                 <NoteSection labelName={this.labelName} labelsArrayDash={this.state.labels} Search={this.Search} handleSearch={this.handleSearch} layout={this.state.list} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} noteGetFunc={this.noteGetFunc} note={this.state.notes} labels={this.state.labels} />
 
             </div>

@@ -41,12 +41,16 @@ class NoteService{
         return axios.get(baseUrl+"trash/")
     }
 
+    getPinned(){
+        return axios.get(baseUrl+"pinned/")
+    }
+
     getReminders(){
         return axios.get(baseUrl+"reminder/")
     }
 
     getLabels(){
-        return axios.get(baseUrl+"label/",{headers:headerData})
+        return axios.get(baseUrl+"label/")
     }
 
     createLabel(data){
@@ -62,7 +66,7 @@ class NoteService{
     }
 
     getLabelsNote(name){
-        return axios.get(baseUrl+"labelnote/"+name+"/",{headers:headerData})
+        return axios.get(baseUrl+"labelnote/"+name+"/")
     }
 
     collaborator(data,id){
@@ -74,6 +78,7 @@ class NoteService{
     search(data){
         return axios.get(baseUrl+"search/?query="+data,{headers:headerData})
     }
+
 
 }
 

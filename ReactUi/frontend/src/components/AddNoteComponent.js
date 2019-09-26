@@ -120,7 +120,7 @@ export default class AddNoteComponent extends Component {
             displaybig = "block"
         }
         return (
-            <div>
+            <div className="ParentCard">
                 {/* <ClickAwayListener onClickAway={() => {this.setState({displayAddNote:false})}}> */}
                 <Card className="AddnoteCard" 
                 onClick={this.addNoteToggle} 

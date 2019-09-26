@@ -272,6 +272,32 @@ class Trash(APIView):
 
 
 @permission_classes((AllowAny,))
+class Pinned(APIView):
+    """
+    This method is for pinned notes visiblity
+    """
+
+    @requiredLogin
+    def get(self, request):
+        """
+        :param request: request for data
+        :return: returns the response
+        """
+        try:
+            userdata = Util.Getuser()
+            uid = userdata['id']
+            note_pinned = Notes.objects.filter(user=uid, is_pinned=True)
+            note = NoteSerializers(note_pinned, many=True)
+            if note:
+                return Response(note.data, status=200)
+            else:
+                logger.warning("no such note present in db")
+                raise ValueError
+        except ValueError:
+            return Response({'message': 'nothing in pinned'}, status=400)
+
+
+@permission_classes((AllowAny,))
 class Archived(APIView):
     """
     This method is for Archived notes
@@ -325,6 +351,37 @@ class Reminder(APIView):
                 raise ValueError
         except ValueError:
             return Response({'message': 'reminder not set'}, status=400)
+
+
+
+@permission_classes((AllowAny,))
+class Collaborator(APIView):
+    """
+    This method is for reminder for notes
+
+    """
+
+    @requiredLogin
+    def get(self, request):
+        """
+        :param request: request for data
+        :return: returns the response
+        """
+        try:
+            userdata = Util.Getuser()
+            uid = userdata['id']
+            collabObj = Notes.objects.filter(user=uid, collaborator__isnull=False)
+            notes = NoteSerializers(collabObj, many=True)
+            # print(datetime.date)
+            # reminder = datetime.datetime.now() - datetime.timedelta(days=90)
+
+            if notes:
+                return Response(notes.data, status=200)
+            else:
+                logger.warning("no such note present in db")
+                raise ValueError
+        except ValueError:
+            return Response({'message': 'collaborator not set'}, status=400)
 
 
 @api_view(["GET"])
@@ -443,6 +500,26 @@ def note_reminder(request, pk):
         return Response({"message": "reminder date added"}, status=200)
     else:
         return Response(notes.data, status=200)
+
+
+# @api_view(['GET', 'POST'])
+# @permission_classes((AllowAny,))
+# def CollaboratorNote(request, pk):
+#     try:
+#         userdata = Util.Getuser()
+#         uid = userdata['id']
+#         labels = Collaborator.objects.get(user=uid, pk=pk)
+#         print("labeldata******", labels)
+#         if labels:
+#             notedata = labels.notes_set.all()
+#             print("--------", notedata)
+#             noteser = NoteSerializers(notedata, many=True)
+#             return Response({'data': noteser.data}, status=200)
+#         else:
+#             raise ValueError
+#     except ValueError:
+#         return Response({'error': 'no such label'}, status=404)
+
 
 
 @permission_classes((AllowAny,))

@@ -22,7 +22,11 @@ urlpatterns = [
 
     path('trash/', v1.Trash.as_view(), name='trash'),
     path('archive/', v1.Archived.as_view(), name='archive'),
+    path('pinned/', v1.Pinned.as_view(), name='pinned'),
+
     path('reminder/', v1.Reminder.as_view(), name='reminder'),
+    path('collaborator/', v1.Collaborator.as_view(), name='collaborator'),
+
     path('note_reminder/<int:pk>/', v1.note_reminder, name='note_reminder'),
 
     path('label/<int:pk>/', v2.LabelApi.as_view(), name='label_detail'),

@@ -5,6 +5,8 @@ import {
 } from '@material-ui/core';
 import "../App.css"
 import addimageIcon from '../svg_icons/addimage.svg'
+import isPinned from '../svg_icons/paper-push-pin.svg'
+
 // import clockIcon from '../svg_icons/iconfinder_9_3898370.svg'
 
 import ColorComponent from './ColorComponent';
@@ -15,6 +17,8 @@ import ArchiveComponent from './ArchiveComponent';
 import CollaboratorComponent from './CollaboratorComponent';
 
 const UpdateFunc = new NoteService().updateANote
+const PinnedAnote = new NoteService().updateANote
+
 
 
 
@@ -122,6 +126,26 @@ export default class NoteItem extends Component {
 
     }
 
+    pinANote=()=>{
+        this.setState({
+            is_pinned: true
+        })
+        let UpdateData ={
+            "is_pinned":this.state.is_pinned,
+            "label": this.state.label,
+            "collaborator": this.state.collaborator
+        }
+        PinnedAnote(UpdateData, this.state.id)
+
+        .then(res=>{
+            console.log("archive update", res)
+            this.props.noteGetFunc()
+        })
+        .catch(error=>{
+            console.log("error in archiving", error)
+        })
+    }
+
 
 
 
@@ -170,7 +194,7 @@ export default class NoteItem extends Component {
             <div className="ParentCard" >
                 <Card className={layout} style={{ background: this.state.color, boxShadow: noteCardShadow }}>
                     <CardContent onClick={this.handleDialogOpen}>
-                        <span></span>
+                        <div><img className="flex-container" id="isPinned" onClick={this.pinANote} src={isPinned} alt="is_pinned"/></div>
                         <p>{this.props.noteobj.title}</p>
                         <p>{this.props.noteobj.text}</p>
                         <p>{reminderChip}</p>
@@ -210,7 +234,9 @@ export default class NoteItem extends Component {
                     }}
 
                 >
+                    
                     <DialogTitle>
+                    <div><img id="isPinned" onClick={this.pinANote} src={isPinned} alt="is_pinned"/></div>
                         <InputBase
                             name="title"
                             onChange={this.handleOnChange}

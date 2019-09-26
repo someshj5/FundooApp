@@ -305,7 +305,18 @@ cursor: pointer;
 
 
 
+#isPinned{
+  height:15px; 
+  margin-left:90%
 
+}
+
+#pinnedTitle{
+  color:gray;
+  margin-top:5%;
+  margin-left:20%;
+  font-family: 'Roboto',arial,sans-serif;
+}
 
 
 
