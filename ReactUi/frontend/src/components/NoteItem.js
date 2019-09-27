@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {
     Card, CardContent, CardActions, Dialog, DialogContent, InputBase,
-    Divider, DialogTitle, Chip
+    Divider, DialogTitle, Chip, Avatar
 } from '@material-ui/core';
 import "../App.css"
 import addimageIcon from '../svg_icons/addimage.svg'
@@ -18,6 +18,9 @@ import CollaboratorComponent from './CollaboratorComponent';
 
 const UpdateFunc = new NoteService().updateANote
 const PinnedAnote = new NoteService().updateANote
+const collaboratorGets = new NoteService().collaboratorGet
+
+
 
 
 
@@ -40,11 +43,16 @@ export default class NoteItem extends Component {
             labeldata:props.noteobj.label,
             label: [],
             collaborator: [],
+            collablist: [],
+            collaboratorData:props.noteobj.collaborator
 
         }
     }
 
-   
+    componentDidMount() {
+        this.getAllCollaborators();
+
+    }
  
 
 
@@ -146,6 +154,20 @@ export default class NoteItem extends Component {
         })
     }
 
+    getAllCollaborators = () => {
+        collaboratorGets()
+            .then(res => {
+                this.setState({
+                    collablist: res.data.data
+                })
+                console.log("collaborator list", this.state.collablist)
+
+            })
+            .catch(error => {
+                console.log("collaborator list error ", error.response)
+            })
+    }
+
 
 
 
@@ -189,6 +211,29 @@ export default class NoteItem extends Component {
                     />
         })
 
+        let collabArr = []
+        this.state.collaboratorData.map((collabobj)=>{
+            console.log("collabobj", collabobj)
+            this.state.collablist.map((collabuser)=>{
+                console.log("collabuser",collabuser)
+                if(collabuser.id === collabobj){
+                    collabArr.push(collabuser)
+                }
+                return collabArr
+            })
+            return collabArr
+            
+
+           
+        })
+        let CollabChip = collabArr.map((collabarrobj)=>{
+             return <Avatar
+                   key={collabarrobj.id}
+                    >{collabarrobj.username[0]}</Avatar>
+        })
+
+
+
         var noteCardShadow = "3px 5px 10px grey"
         return (
             <div className="ParentCard" >
@@ -199,6 +244,7 @@ export default class NoteItem extends Component {
                         <p>{this.props.noteobj.text}</p>
                         <p>{reminderChip}</p>
                         <p>{LabelChip}</p>
+                        <p>{CollabChip}</p>
 
                     </CardContent>
                     <CardActions>

@@ -463,7 +463,7 @@ def collaborator_GetView(request):
     try:
         userlist = User.objects.all()
         # userlist = User.objects.exclude(first_name__contains=user.username)
-        fields = ('username','email')
+        fields = ('username','email','id')
         userser = SimplePersonSerializer(userlist, many=True, fields=fields).data
         # userser = serializers.serialize('json',userlist, fields=('username', 'email'))
         # print(userser['username'])
