@@ -14,11 +14,10 @@ from notes.service.Utility import Util
 
 def requiredLogin(function):
     """
-    :param function: the original function
+    :param function: the original function to be executed
     :return: the users id which is logged in
     """
-
-    def wrapper(request,*args, **kwargs):
+    def wrapper(*args, **kwargs):
         try:
             redisCache = Redis()
             redis_token = redisCache.get('token')
@@ -30,7 +29,7 @@ def requiredLogin(function):
 
             user = User.objects.get(pk=user_id)
             if user:
-                return function(request,*args, **kwargs)
+                return function(*args, **kwargs)
         except User.DoesNotExist:
             return Response('Permission Denied!')
 
