@@ -21,59 +21,59 @@ class NoteService{
     }
 
     getANote(id){
-        return axios.get(baseUrl+"notes/"+id+"/")
+        return axios.get(baseUrl+"notes/"+id+"/",{headers:headerData})
     }
 
 
     delANote(data,id){
-        return axios.delete(baseUrl+"notes/"+id+"/", data)
+        return axios.delete(baseUrl+"notes/"+id+"/", data,{headers:headerData})
     }
 
     updateANote(data,id){
-        return axios.put(baseUrl+"notes/"+id+"/",data)
+        return axios.put(baseUrl+"notes/"+id+"/",data,{headers:headerData})
     }
 
     getArchives(){
-        return axios.get(baseUrl+"archive/")
+        return axios.get(baseUrl+"archive/",{headers:headerData})
     }
 
     getTrash(){
-        return axios.get(baseUrl+"trash/")
+        return axios.get(baseUrl+"trash/",{headers:headerData})
     }
 
     getPinned(){
-        return axios.get(baseUrl+"pinned/")
+        return axios.get(baseUrl+"pinned/",{headers:headerData})
     }
 
     getReminders(){
-        return axios.get(baseUrl+"reminder/")
+        return axios.get(baseUrl+"reminder/",{headers:headerData})
     }
 
     getLabels(){
-        return axios.get(baseUrl+"label/")
+        return axios.get(baseUrl+"label/",{headers:headerData})
     }
 
     createLabel(data){
-        return axios.post(baseUrl+"label/", data)
+        return axios.post(baseUrl+"label/", data,{headers:headerData})
     }
 
     deleteLabel(id){
-        return axios.delete(baseUrl+"label/"+id+"/")
+        return axios.delete(baseUrl+"label/"+id+"/",{headers:headerData})
     }
 
     editLabel(data,id){
-        return axios.put(baseUrl+"label/"+id+"/", data)
+        return axios.put(baseUrl+"label/"+id+"/", data,{headers:headerData})
     }
 
     getLabelsNote(name){
-        return axios.get(baseUrl+"labelnote/"+name+"/")
+        return axios.get(baseUrl+"labelnote/"+name+"/",{headers:headerData})
     }
 
     collaborator(data,id){
-        return axios.post(baseUrl+"collaborators/"+id+"/",data)
+        return axios.post(baseUrl+"collaborators/"+id+"/",data,{headers:headerData})
     }
     collaboratorGet(){
-        return axios.get(baseUrl+"Getcollaborators/")
+        return axios.get(baseUrl+"Getcollaborators/",{headers:headerData})
     }
     search(data){
         return axios.get(baseUrl+"search/?query="+data,{headers:headerData})

@@ -60,7 +60,7 @@ export class Login extends Component {
             return (<Redirect to={"/dashboard"} />)
         };
 
-        if (sessionStorage.getItem('userdata')) {
+        if (sessionStorage.getItem('userdata') && localStorage.getItem('token')) {
             return (<Redirect to={"/dashboard"} />)
         }
 

@@ -32,7 +32,7 @@ class Redis:
         :param key: Returns all keys matching pattern
         :return: returns the value of the specific key
         """
-        print("Auth redis")
+        print("Auth redis service.py")
         value = self.r.get(key)
 
         return value
@@ -42,6 +42,10 @@ class Redis:
         :return: removes the value of the specific key assigning it to nil
         """
         self.r.flushall()
+
+    # def set_many(self,key,value):
+    #
+    #     self.r.set_many(value)
 
 
 

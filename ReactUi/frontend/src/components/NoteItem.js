@@ -51,6 +51,8 @@ export default class NoteItem extends Component {
 
     componentDidMount() {
         this.getAllCollaborators();
+        this.props.noteGetFunc();
+
 
     }
  
@@ -91,8 +93,8 @@ export default class NoteItem extends Component {
     DeleteReminder = () => {
         let reminderData = {
             "reminder": null,
-            "label": this.state.label,
-            "collaborator": this.state.collaborator
+            "label": this.state.labeldata,
+            "collaborator": this.state.collaboratorData
 
         }
         UpdateFunc(reminderData, this.state.id)
@@ -116,8 +118,8 @@ export default class NoteItem extends Component {
         let UpdateData = {
             "title": this.state.title,
             "text": this.state.text,
-            "label": this.state.label,
-            "collaborator": this.state.collaborator
+            "label": this.state.labeldata,
+            "collaborator": this.state.collaboratorData
         }
 
         UpdateFunc(UpdateData, this.state.id)
@@ -140,8 +142,8 @@ export default class NoteItem extends Component {
         })
         let UpdateData ={
             "is_pinned":this.state.is_pinned,
-            "label": this.state.label,
-            "collaborator": this.state.collaborator
+            "label": this.state.labeldata,
+            "collaborator": this.state.collaboratorData
         }
         PinnedAnote(UpdateData, this.state.id)
 
@@ -252,7 +254,7 @@ export default class NoteItem extends Component {
                             <div><ReminderComponent noteGetFunc={this.props.noteGetFunc}
                                 id={this.state.id} label={this.state.label} reminderChange={this.reminderChange}
                                 collaborator={this.state.collaborator} /></div>
-                            <div><CollaboratorComponent id={this.state.id}/></div>
+                            <div><CollaboratorComponent noteGetFunc={this.props.noteGetFunc} id={this.state.id}/></div>
                             <div><ColorComponent noteGetFunc={this.props.noteGetFunc} id={this.state.id}
                                 label={this.state.label}
                                 collaborator={this.state.collaborator}

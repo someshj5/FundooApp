@@ -27,6 +27,8 @@ export default class CollaboratorComponent extends Component {
 
     componentDidMount() {
         this.getAllCollaborators();
+        // this.props.noteGetFunc();
+        
 
     }
 
@@ -43,6 +45,7 @@ export default class CollaboratorComponent extends Component {
             Dopen: false,
             isRename: false
         })
+    this.props.noteGetFunc()
     }
 
     handleAddCollab = () => {

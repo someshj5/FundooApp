@@ -166,17 +166,18 @@ def user_login(request):
             if user:
                 payload = {
                     'id': user.id,
-                    'email': user.email
+                    'email': user.email,
+                    'username': user.username
                 }
                 jwt_token = jwt.encode(
                     payload, "SECRET_KEY",
                     algorithm="HS256").decode('utf-8')
                 r = Redis()
                 print('Redis', r)
-
+                r.set("token", jwt_token)
                 print("token+++++", jwt_token)
-
-                r.set('token', jwt_token)
+                username = user.username
+                r.set(username, jwt_token)
                 login(request, user)
                 return Response({'message': 'login successfull', 'token': jwt_token, 'id': user.pk},
                                 status=200,

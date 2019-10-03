@@ -59,7 +59,7 @@ export class DashboardComponent extends Component {
         this.noteGetFunc();
         // this.DrawerLabels()
 
-        if (sessionStorage.getItem('userdata')) {
+        if (sessionStorage.getItem('userdata') && (localStorage.getItem('token'))) {
             console.log("call user feed")
         }
         else {
@@ -109,25 +109,25 @@ export class DashboardComponent extends Component {
 
 
 
-        labelName(data){
-        console.log("data label "+data);
-        
+    labelName(data){
+    console.log("data label "+data);
+    
+    this.setState({
+        name:data,
+        notes:[]
+    })
+    console.log("label name from left drawer data",this.state.name)
+    LabelsNote(data)
+    .then(res=>{
         this.setState({
-            name:data,
-            notes:[]
+            notes: res.data.data
         })
-        console.log("label name from left drawer data",this.state.name)
-        LabelsNote(data)
-        .then(res=>{
-            this.setState({
-                notes: res.data.data
-            })
-            console.log("LAbeled note on dash data", res.data.data)
-        })
-        .catch(error=>{
-            console.log("Labeled note on dash error", error.response.data)
-        })
-    }
+        console.log("LAbeled note on dash data", res.data.data)
+    })
+    .catch(error=>{
+        console.log("Labeled note on dash error", error.response.data)
+    })
+}
 
 
 
@@ -323,7 +323,7 @@ Search=()=>{
                 <LeftDrawer LabelsOnDash={this.LabelsOnDash} labelName={this.labelName} labels={this.state.labels} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} noteGetFunc={this.noteGetFunc} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} open={this.state.open} ClickSec={this.ClickSec} />
                 <AddNoteComponent noteGetFunc={this.noteGetFunc} />
                 <p id="pinnedTitle">Pinned</p>
-                <NoteSection labelName={this.labelName} labelsArrayDash={this.state.labels} Search={this.Search} handleSearch={this.handleSearch} layout={this.state.list} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} noteGetFunc={this.noteGetFunc} note={this.state.notes} labels={this.state.labels} />
+                <NoteSection leftDfun={this.leftDfun} labelName={this.labelName} labelsArrayDash={this.state.labels} Search={this.Search} handleSearch={this.handleSearch} layout={this.state.list} DrawerLabels={this.DrawerLabels} ReminderGet={this.ReminderGet} TrashGet={this.TrashGet} ArchiveGet={this.ArchiveGet} noteGetFunc={this.noteGetFunc} note={this.state.notes} labels={this.state.labels} />
 
             </div>
         )

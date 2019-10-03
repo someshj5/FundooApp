@@ -97,14 +97,16 @@ def upload(request):
         return Response({'error': 'no image detected'}, status=400)
 
 
-@permission_classes((AllowAny,))
+# @method_decorator(requiredLogin,name="dispatch")
 class NotesCreate(APIView):
     """
     This method creates notes for the application
     """
+    permission_classes = (AllowAny,)
 
     # @requiredLogin
-    def get(self, request):
+    # @permission_classes((AllowAny,))
+    def get(self, request, *args, **kwargs):
         """
         :param request: request for data
         :return: returns the response
@@ -128,8 +130,9 @@ class NotesCreate(APIView):
         except ValueError:
             return Response({'error': 'no such notes'}, status=404)
 
-    @requiredLogin
-    def post(self, request):
+    # @requiredLogin
+    # @permission_classes((AllowAny,))
+    def post(self, request, *args, **kwargs):
         """
 
         :param request: request for data
@@ -172,13 +175,14 @@ class NotesCreate(APIView):
         return response
 
 
-@permission_classes((AllowAny,))
+# @method_decorator(requiredLogin,name="dispatch")
 class NotesApi(APIView):
     """
     This methods are for updating, deleting and getting the notes created.
     """
 
-    @requiredLogin
+    # @requiredLogin
+    @permission_classes((AllowAny,))
     def get(self, request, pk):
         """
         :param pk: the primary key of note
@@ -196,7 +200,7 @@ class NotesApi(APIView):
         except ValueError:
             return Response({'error': 'no such notes'}, status=404)
 
-    @requiredLogin
+    # @requiredLogin
     def delete(self, request, pk):
         """
         :param pk: the primary key of note
@@ -215,7 +219,7 @@ class NotesApi(APIView):
         except ValueError:
             return Response({'error': 'no such notes'}, status=404)
 
-    @requiredLogin
+    # @requiredLogin
     def put(self, request, pk):
         """
         :param pk: the primary key of note
@@ -245,13 +249,13 @@ class NotesApi(APIView):
             return Response({"message": "lklkdflkdsf"}, status=404)
 
 
-@permission_classes((AllowAny,))
+# @method_decorator(requiredLogin,name="dispatch")
 class Trash(APIView):
     """
     This method is for trash notes visiblity
     """
 
-    @requiredLogin
+    # @requiredLogin
     def get(self, request):
         """
         :param request: request for data
@@ -271,13 +275,13 @@ class Trash(APIView):
             return Response({'message': 'nothing in trash'}, status=400)
 
 
-@permission_classes((AllowAny,))
+# @method_decorator(requiredLogin,name="dispatch")
 class Pinned(APIView):
     """
     This method is for pinned notes visiblity
     """
 
-    @requiredLogin
+    # @requiredLogin
     def get(self, request):
         """
         :param request: request for data
@@ -297,14 +301,14 @@ class Pinned(APIView):
             return Response({'message': 'nothing in pinned'}, status=400)
 
 
-@permission_classes((AllowAny,))
+@method_decorator(requiredLogin, name="dispatch")
 class Archived(APIView):
     """
     This method is for Archived notes
     """
-
-    @requiredLogin
-    def get(self, request):
+    permission_classes = (AllowAny,)
+    # @requiredLogin
+    def get(self, request,*args,**kwargs):
         """
         :param request: request for data
         :return: returns the response
@@ -323,15 +327,16 @@ class Archived(APIView):
             return Response({'message': 'no archives found'}, status=400)
 
 
-@permission_classes((AllowAny,))
+@method_decorator(requiredLogin, name="dispatch")
 class Reminder(APIView):
     """
     This method is for reminder for notes
 
     """
+    # permission_classes = (AllowAny,)
 
-    @requiredLogin
-    def get(self, request):
+    # @requiredLogin
+    def get(self, request, *args, **kwargs):
         """
         :param request: request for data
         :return: returns the response
@@ -353,16 +358,16 @@ class Reminder(APIView):
             return Response({'message': 'reminder not set'}, status=400)
 
 
-
-@permission_classes((AllowAny,))
+# @method_decorator(requiredLogin,name="dispatch")
 class Collaborator(APIView):
     """
     This method is for reminder for notes
 
     """
 
-    @requiredLogin
-    def get(self, request):
+    # @permission_classes((AllowAny,))
+
+    def get(self, request, *args, **kwargs):
         """
         :param request: request for data
         :return: returns the response
@@ -416,7 +421,7 @@ def search(request):
 
 
 @api_view(['GET', 'POST'])
-# @requiredLogin
+# @method_decorator(requiredLogin, name="dispatch")
 @permission_classes((AllowAny,))
 def collaborator_view(request, pk):
     """
@@ -463,7 +468,7 @@ def collaborator_GetView(request):
     try:
         userlist = User.objects.all()
         # userlist = User.objects.exclude(first_name__contains=user.username)
-        fields = ('username','email','id')
+        fields = ('username', 'email', 'id')
         userser = SimplePersonSerializer(userlist, many=True, fields=fields).data
         # userser = serializers.serialize('json',userlist, fields=('username', 'email'))
         # print(userser['username'])
@@ -478,13 +483,9 @@ def collaborator_GetView(request):
         return Response({"error": "user does not exist"}, status=404)
 
 
-
-
-
-
 @api_view(['POST', 'GET'])
 # @permission_classes((AllowAny,))
-@requiredLogin
+# @requiredLogin
 def note_reminder(request, pk):
     """
         :param request: requesting user for id and email
@@ -519,7 +520,6 @@ def note_reminder(request, pk):
 #             raise ValueError
 #     except ValueError:
 #         return Response({'error': 'no such label'}, status=404)
-
 
 
 @permission_classes((AllowAny,))
