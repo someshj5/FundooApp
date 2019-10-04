@@ -79,6 +79,10 @@ class NoteService{
         return axios.get(baseUrl+"search/?query="+data,{headers:headerData})
     }
 
+    uploadImage(data){
+        return axios.post(baseUrl+"upload/",data)
+    }
+
 
 }
 

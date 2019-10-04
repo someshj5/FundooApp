@@ -20,6 +20,8 @@ class UserService{
         return axios.post(baseUserUrl+"forgot_password/",data)
     }
 
+   
+
     // forgotPassword_service(data){
     //     return axios.post(baseUserUrl+"forgot_password/",data,{
     //         headers:{
