@@ -207,18 +207,28 @@ def forgot_password(request):
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             user = None
-        # print(user, '----->')
         try:
             if user:
+                payload = {
+                    'id': user.id,
+                    'email': user.email,
+                    'username': user.username
+                }
+                jwt_token = jwt.encode(
+                    payload, "SECRET_KEY",
+                    algorithm="HS256").decode('utf-8')
+                rabbit_mq = RabbitService()
                 current_site = get_current_site(request)
                 subject = 'Password reset'
                 message = render_to_string('password_reset.html', {
                     'user': user,
-                    'domain': current_site.domain,
+                    'domain': "localhost:3000",
                     'uid': urlsafe_base64_encode(force_bytes(user.id)),
-                    'token': account_activation_token.make_token(user),
+                    'token': jwt_token,
                 })
                 to_email = user.email
+                # rabbit_mq.send_email(subject, message, to_email)
+
                 email = EmailMessage(subject, message, to=[to_email])
                 email.send()
                 # print('xyz')
@@ -232,7 +242,7 @@ def forgot_password(request):
 
 
 @api_view(['GET', 'POST'])
-def password_reset(request, uidb64, token):
+def password_reset(request, token):
     """
     This method resets the password of the user
     :param request: request here is POST and GET
@@ -241,18 +251,20 @@ def password_reset(request, uidb64, token):
     :return: it return the Password reset status
     """
     try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
+        print("*******************", token)
+        decoded = jwt.decode(token, "SECRET_KEY", algorithm="HS256")
+        uid = decoded['id']
         user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+    except User.DoesNotExist:
         user = None
-    if user is not None and account_activation_token.check_token(user, token):
-
+    if user is not None:
+        if request.method == "GET":
+            return Response({"name": user.username}, status=200)
         if request.method == 'POST':
             password = request.data.get('password')
             user.password = password
             user.save()
             return Response({"password reset": 'success'}, status=200)
 
-        return Response({"name": user.username}, status=200)
     else:
-        return HttpResponse('Password Reset link is invalid!')
+        return Response({'error': 'Password Reset link is invalid!'},status=400)

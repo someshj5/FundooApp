@@ -51,7 +51,7 @@ export default class NoteItem extends Component {
 
     componentDidMount() {
         this.getAllCollaborators();
-        this.props.noteGetFunc();
+        // this.props.noteGetFunc();
 
 
     }
@@ -207,7 +207,7 @@ export default class NoteItem extends Component {
 
         let LabelChip = DrawerLabelArray.map((DlabelArray)=>{
             return <Chip
-                    style={{marginTop:5}}
+                    style={{marginTop:5 }}
                     key={DlabelArray.id}
                     label={DlabelArray.name}
                     />
@@ -230,8 +230,9 @@ export default class NoteItem extends Component {
         })
         let CollabChip = collabArr.map((collabarrobj)=>{
              return <Avatar
+                    style={{ marginTop:"2%", borderWidth:2,borderStyle:"solid",borderColor:"white"}}
                    key={collabarrobj.id}
-                    >{collabarrobj.username[0]}</Avatar>
+                    >{collabarrobj.username[0]  }</Avatar>
         })
 
 
@@ -303,6 +304,8 @@ export default class NoteItem extends Component {
                             placeholder="Text"
                             defaultValue={this.props.noteobj.text}
                         />
+                        <p>{CollabChip}</p>
+
                     </DialogContent>
                     {/* <DialogActions> */}
                     <div className="flex-containerDialog">

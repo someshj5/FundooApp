@@ -60,7 +60,10 @@ export default class NoteSection extends Component {
 
 
                 </Grid>
+
                 <Divider/>
+                <p id="otherTitle">Others</p>
+
                 <Grid
                     container
                     justify="space-around"
@@ -70,7 +73,6 @@ export default class NoteSection extends Component {
                         marginTop: 20,
                         marginLeft: 250
                     }}>
-
                     {/* {notesp} */}
                     {Unpinnednotes}
 

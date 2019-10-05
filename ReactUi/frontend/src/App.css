@@ -318,6 +318,13 @@ cursor: pointer;
   font-family: 'Roboto',arial,sans-serif;
 }
 
+#otherTitle{
+  color:gray;
+  /* margin-top:%; */
+  margin-left:20%;
+  font-family: 'Roboto',arial,sans-serif;
+}
+
 
 
 .flex-container > div {

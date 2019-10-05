@@ -7,7 +7,7 @@ import NoteService from '../services/NoteService';
 
 // import listView from '../svg_icons/listview.svg'
 
-ProfilePicUpload = new NoteService().uploadImage
+// ProfilePicUpload = new NoteService().uploadImage
 
 export default class MenuComponent extends Component {
     constructor() {

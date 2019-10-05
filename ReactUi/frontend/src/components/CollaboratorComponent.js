@@ -21,7 +21,8 @@ export default class CollaboratorComponent extends Component {
             id: props.id,
             collablist: [],
             suggestions: [],
-            items:["sonu",'Monu','Gomu']
+            items:["sonu",'Monu','Gomu'],
+            collabResponse:null
         }
     }
 
@@ -45,7 +46,7 @@ export default class CollaboratorComponent extends Component {
             Dopen: false,
             isRename: false
         })
-    this.props.noteGetFunc()
+        this.props.noteGetFunc()
     }
 
     handleAddCollab = () => {
@@ -97,7 +98,9 @@ export default class CollaboratorComponent extends Component {
         collaboratorGets()
             .then(res => {
                 this.setState({
-                    collablist: res.data.data
+                    collablist: res.data.data,
+                    collabResponse:res.data.message
+
                 })
                 console.log("collaborator list", this.state.collablist)
 
@@ -180,6 +183,7 @@ export default class CollaboratorComponent extends Component {
                                 </ListItemText>
                                 <div style={{position:"absolute", height:50}}>{this.renderSuggestions()}</div>
                             </span>
+                            <p style={{color:"red"}}>{this.state.collabResponse}</p>
 
                         </ListItem>
                     </DialogContent>

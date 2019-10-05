@@ -66,6 +66,8 @@ def upload(request):
     :return: returns a Httpresponse of file upload successfull
     """
     try:
+        userdata = Util.Getuser()
+        uid = userdata['id']
         if request.method == "POST":
             image = request.FILES.get('IMAGE')
             if image:
@@ -74,17 +76,12 @@ def upload(request):
                     s3 = S3Upload
                     picture = s3.transfer(request, image)
                     print("s2 pic url returned", picture)
-                    snap = User(profile_pic=picture)
-                    userser = UserSerializers(snap)
-                    userser.is_valid(raise_exception=True)
-                    # userser.update(validated_data=snap)
-                    userser.validated_data(data=userser)
-                    if userser:
-                        obj = userser.save()
-                        obj.save()
-                        logger.info("file upload success")
-                        if picture:
-                            return HttpResponse('File uploaded to s3')
+                    user = User.objects.get(id=uid)
+
+                    snap = user(profile_pic=picture)
+                    logger.info("file upload success")
+                    if snap:
+                        return HttpResponse('File uploaded to s3')
                     else:
                         raise UserSerializers.errors
                 else:
