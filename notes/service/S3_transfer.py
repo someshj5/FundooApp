@@ -25,7 +25,7 @@ class S3Upload:
             s3.upload_fileobj(image, 'somesh-static', str(imagename))
             print("uploaded")
 
-            url = 'http: // {}.s3.{}.amazonaws.com / {}'.format('somesh-static', s3.meta.region_name,  imagename)
+            url = f'http: // {"somesh-static"}.s3.{s3.meta.region_name}.amazonaws.com / {imagename}'
 
                  # https: // somesh - static.s3.ap - south - 1.amazonaws.com / nature2.jpeg
 

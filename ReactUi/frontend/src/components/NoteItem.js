@@ -256,7 +256,7 @@ export default class NoteItem extends Component {
                                 id={this.state.id} label={this.state.label} reminderChange={this.reminderChange}
                                 collaborator={this.state.collaborator} /></div>
                             <div><CollaboratorComponent noteGetFunc={this.props.noteGetFunc} id={this.state.id}/></div>
-                            <div><ColorComponent noteGetFunc={this.props.noteGetFunc} id={this.state.id}
+                            <div><ColorComponent labeldata={this.state.labeldata} collaboratorData={this.state.collaboratorData} noteGetFunc={this.props.noteGetFunc} id={this.state.id}
                                 label={this.state.label}
                                 collaborator={this.state.collaborator}
                                 changeColor={this.changeColor} /></div>

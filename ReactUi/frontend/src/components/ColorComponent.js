@@ -16,8 +16,8 @@ export default class ColorComponent extends Component {
             id: props.id,
             menuOpen:false,
             anchorEl:null,
-            label: props.label,
-            collaborator: props.collaborator,
+            label: props.labeldata,
+            collaborator: props.collaboratorData,
             colors:[
                 {value:"#fff"},
                 {value:"#f28b82"},

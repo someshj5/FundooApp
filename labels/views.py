@@ -12,10 +12,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from auth import requiredLogin
-from fundooapp.models import User
 from labels.models import Label
 from labels.serializers import LabelSerializers
-from notes.models import Notes
 from notes.serializers import NoteSerializers
 from notes.service.Utility import Util
 
@@ -30,16 +28,15 @@ def get_custom_response(success=False, message='something went wrong', data=[], 
     return Response(response, status=status)
 
 
-@method_decorator(requiredLogin,name="dispatch")
+@method_decorator(requiredLogin, name="dispatch")
 class LabelCreate(APIView):
     """
     This method is for the creating the label for the specific notes
     """
 
-    # @requiredLogin
     permission_classes = (AllowAny,)
 
-    def get(self, request, *args,**kwargs):
+    def get(self, request, *args, **kwargs):
         """
         :param request: request for data
         :return: returns the response
@@ -56,7 +53,6 @@ class LabelCreate(APIView):
         except ValueError:
             return Response({'error': 'no such label'}, status=404)
 
-    # @requiredLogin
     def post(self, request):
         """
         :param request: request for data
@@ -82,10 +78,10 @@ class LabelCreate(APIView):
             return Response(serialize.errors, status=201)
 
 
-@method_decorator(requiredLogin,name="dispatch")
+@method_decorator(requiredLogin, name="dispatch")
 class LabelApi(APIView):
-
     permission_classes = (AllowAny,)
+
     def get(self, request, pk):
         """
         :param pk: the primary key of label
@@ -102,7 +98,6 @@ class LabelApi(APIView):
         except ValueError:
             return Response({'error': 'no such label'}, status=404)
 
-    # @requiredLogin
     def delete(self, request, pk):
         """
         :param pk: the primary key of label
@@ -120,7 +115,6 @@ class LabelApi(APIView):
         except ValueError:
             return Response({'error': 'no such label'}, status=404)
 
-    # @requiredLogin
     def put(self, request, pk):
         """
         :param pk: the primary key of label
@@ -145,7 +139,14 @@ class LabelApi(APIView):
 @requiredLogin
 @api_view(['GET', 'POST'])
 @permission_classes((AllowAny,))
-def labelNote(request, labelname,*args, **kwargs):
+def labelNote(request, labelname, *args, **kwargs):
+    """
+    :param request: request for data
+    :param labelname: label name passed as params
+    :param args: arguements
+    :param kwargs: keyword arguements
+    :return: note with label
+    """
     try:
         userdata = Util.Getuser()
         uid = userdata['id']

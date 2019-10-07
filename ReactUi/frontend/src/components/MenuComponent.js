@@ -126,6 +126,9 @@ export default class MenuComponent extends Component {
     }
 
     imageUploadService=()=>{
+        let Data={
+            "IMAGE":
+        }
         
     }
 
@@ -165,8 +168,9 @@ export default class MenuComponent extends Component {
                             height: "auto"
                         }
                     }}>
-                   
+                    <form>
                     <DialogContent>
+                       
                         <InputBase type="file" onChange={this.onSelect}>Upload</InputBase>
                         {src && (
                             <ReactCrop src={src} crop={crop} onImageLoaded={this.onImageLoaded}
@@ -180,6 +184,7 @@ export default class MenuComponent extends Component {
                       <p onclick={this.imageUploadService}>Upload</p>
                       <p onClick={this.CloseDialog}>Cancel</p>
                     </DialogActions>
+                    </form>
 
                 </Dialog>
 

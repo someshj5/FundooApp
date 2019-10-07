@@ -80,7 +80,7 @@ class NoteService{
     }
 
     uploadImage(data){
-        return axios.post(baseUrl+"upload/",data)
+        return axios.post(baseUrl+"upload/",data,{headers:headerData})
     }
 
 
