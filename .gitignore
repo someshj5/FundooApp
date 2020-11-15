@@ -22,7 +22,7 @@ src/static_root/
 
 # Node modules
 /node_modules/
-/frontend/node_modules/
+/ReactUi/frontend/node_modules/
 yarn.lock
 npm-debug.log
 
